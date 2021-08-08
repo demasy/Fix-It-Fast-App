@@ -1,0 +1,123 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+ <div class="oj-hybrid-applayout-page vh-unit">
+  <div class="oj-applayout-fixed-top">
+    <header role="banner" >
+      <oj-module class="oj-hybrid-applayout-header" config="[[headerConfig]]"></oj-module>
+    </header>
+  </div>
+
+  <div class="oj-applayout-content">
+    <div role="main" class="oj-hybrid-applayout-content">
+
+      <input type="file" id="upload-profile-pic" class="demo-hide-photo-input" aria-label="upload profile photo" accept="image/*" aria-hidden="true">
+
+      <div>
+
+        <div class="oj-flex oj-sm-flex-direction-column oj-sm-align-items-center oj-sm-padding-8x demo-profile-top-section-gradient-green">
+          <oj-avatar
+            id="profilePhoto" src="[[userProfileModel().photo]]" 
+            role='img' size='xl' aria-label="Profile Photo">
+          </oj-avatar>
+
+          <oj-bind-if test="[[!editMode()]]">
+            <oj-bind-if test="[[isPhone()]]">
+              <h2 class="oj-typography-heading-sm">
+                <oj-bind-text value="[[userProfileModel().firstName() + ' ' + userProfileModel().lastName()]]"></oj-bind-text>
+              </h2>
+            </oj-bind-if>
+            <oj-bind-if test="[[!isPhone()]]">
+              <h2>
+                <oj-bind-text value="[[userProfileModel().firstName() + ' ' + userProfileModel().lastName()]]"></oj-bind-text>
+              </h2>
+            </oj-bind-if>
+
+            <div id="title" :class="[[{'oj-typography-body-sm': isPhone}]]" class="oj-typography-body-md oj-flex-item">
+              <oj-bind-text value="[[userProfileModel().role]]"></oj-bind-text>
+            </div>
+          </oj-bind-if>
+
+          <oj-bind-if test="[[editMode()]]">
+            <div>
+              <a id="changePhotoBtn" href="#" on-click="[[changePhoto]]" :class="[[{'oj-typography-body-sm': isPhone}]]" class="demo-change-photo oj-typography-body-md">Change</a>
+            </div>
+          </oj-bind-if>
+        </div>
+
+        <oj-bind-if test="[[editMode()]]">
+          <oj-form-layout class="oj-web-padding">
+            <oj-input-text id='firstNameInput' label-hint='First Name' spellcheck='false' value='{{userProfileModel().firstName}}' autofocus></oj-input-text>
+            <oj-input-text id='lastNameInput' label-hint='Last Name' spellcheck='false' value='{{userProfileModel().lastName}}'></oj-input-text>
+            <oj-input-text id='titleInput' label-hint='Title' value='{{userProfileModel().role}}'></oj-input-text>
+            <oj-input-text id='mobileInput' label-hint='Mobile' virtual-keyboard='tel' value='{{userProfileModel().mobile}}'></oj-input-text>
+            <oj-input-text id='homeInput' label-hint='Home' virtual-keyboard='tel' value='{{userProfileModel().home}}'></oj-input-text>
+            <oj-input-text id='emailInput'  label-hint='Email' value='{{userProfileModel().email}}'></oj-input-text>
+            <oj-input-text id='locationInput' label-hint='Location' spellcheck='false' value='{{userProfileModel().location.formattedAddress}}'></oj-input-text>
+          </oj-form-layout>
+        </oj-bind-if>
+
+        <oj-bind-if test="[[!editMode()]]">
+          <oj-form-layout class="oj-web-padding">
+            <oj-label-value>
+              <oj-label slot="label">Mobile</oj-label>
+              <span id="mobileAnchor" slot="value" class="oj-flex-bar oj-sm-align-items-center" 
+                aria-label="mobile phone number">
+                <span role="img" aria-label="Circular icon with CSS SVG" class="oj-icon-circle oj-icon-xs oj-sm-margin-2x-end">
+                  <span class="oj-icon-circle-inner">
+                    <span id="mobileIcon" class="oj-ux-ico-cell-phone oj-ux-icon-size-6x"></span>
+                  </span>
+                </span>
+                <span id="mobileSpan"><oj-bind-text value="[[userProfileModel().mobile]]"></oj-bind-text></span>
+              </span>
+            </oj-label-value>
+            <oj-label-value>
+              <oj-label slot="label" id="homeLabel">Home</oj-label>
+              <span id="homeAnchor" slot="value" class="oj-flex-bar oj-sm-align-items-center" 
+                aria-label="home phone number">
+                <span role="img" aria-label="Circular icon with CSS SVG" class="oj-icon-circle oj-icon-xs oj-sm-margin-2x-end">
+                  <span class="oj-icon-circle-inner">
+                    <span id="phoneIcon" class="oj-ux-ico-phone oj-ux-icon-size-6x"></span>
+                  </span>
+                </span>
+                <span id="officeSpan"><oj-bind-text value="[[userProfileModel().home]]"></oj-bind-text></span>
+              </span>
+            </oj-label-value>
+            <oj-label-value>
+              <oj-label slot="label" id="emailLabel">Email</oj-label>
+              <span id="emailAnchor" slot="value" class="oj-flex-bar oj-sm-align-items-center" 
+                aria-label="office phone number">
+                <span role="img" aria-label="Circular icon with CSS SVG" class="oj-icon-circle oj-icon-xs oj-sm-margin-2x-end">
+                  <span class="oj-icon-circle-inner">
+                    <span id="emailIcon" class="oj-ux-ico-email oj-ux-icon-size-6x"></span>
+                  </span>
+                </span>
+                <span id="emailSpan"><oj-bind-text value="[[userProfileModel().email]]"></oj-bind-text></span>
+              </span>
+            </oj-label-value>
+            <oj-label-value>
+              <oj-label slot="label" id="locationLabel">Location</oj-label>
+              <span id="locationAnchor" slot="value" class="oj-flex-bar oj-sm-align-items-center" 
+                aria-label="office phone number">
+                <span role="img" aria-label="Circular icon with CSS SVG" class="oj-icon-circle oj-icon-xs oj-sm-margin-2x-end">
+                  <span class="oj-icon-circle-inner">
+                    <span id="locationIcon" class="oj-ux-ico-location-pin oj-ux-icon-size-6x"></span>
+                  </span>
+                </span>
+                <span id="locationSpan"><oj-bind-text value="[[userProfileModel().location.formattedAddress]]"></oj-bind-text></span>
+              </span>
+            </oj-label-value>
+          </oj-form-layout>
+        </oj-bind-if>
+      </div>
+    </div>
+  </div>
+</div>
+  

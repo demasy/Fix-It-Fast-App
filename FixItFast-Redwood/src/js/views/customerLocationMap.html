@@ -1,0 +1,56 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<div class="oj-hybrid-applayout-page vh-unit">
+  
+  <div id="customerLocationPage" role="main" class="oj-applayout-content oj-complete">
+
+    <div>
+
+      <div id="detailsPanel" class="push-content-padding-map demo-map-panel oj-bg-neutral-10">
+        <div class="oj-hybrid-padding">
+          <div class="oj-flex-bar oj-typography-body-lg">
+            <div class="oj-flex-bar-start">
+              <oj-bind-text value="[[customerData().firstName() + ' ' + customerData().lastName()]]"></oj-bind-text>
+            </div>
+            <div class="oj-flex-bar-end">
+              <oj-bind-text value="[[customerData().duration]]"></oj-bind-text>
+            </div>
+          </div>
+          <div class="oj-flex-bar oj-text-sm oj-hybrid-padding-bottom demo-secondary-label oj-text-secondary-color">
+            <div class="oj-flex-bar-start">
+              <oj-bind-text value="[[addressLine1]]"></oj-bind-text>
+            </div>
+            <div class="oj-flex-bar-end">
+              <oj-bind-text value="[[customerData().distance]]"></oj-bind-text>
+            </div>
+          </div>
+          <div class="oj-flex-bar oj-text-sm demo-secondary-label oj-text-secondary-color">
+            <div class="oj-flex-bar-start">
+              <oj-bind-text value="[[addressLine2]]"></oj-bind-text>
+            </div>
+          </div>
+          <div class="oj-flex-bar">
+            <div class="oj-flex-bar-start oj-sm-align-items-center demo-flex-zero">
+              <span class="oj-ux-ico-phone"></span>
+            </div>
+            <div class="oj-flex-bar-middle">
+              <a :href="[['tel:'+customerData().mobile]]">
+                <oj-bind-text value="[[customerData().mobile]]"></oj-bind-text>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="map" class="demo-full-width demo-full-viewport-height"  data-bind="customerLocMap:map"></div>
+    </div>
+  </div>
+</div>

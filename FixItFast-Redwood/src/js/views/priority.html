@@ -1,0 +1,26 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<div id="incidentMainPage" role="main" class="oj-applayout-content">
+
+<div aria-label="priority" class="oj-web-padding">
+  <oj-radioset id='priorityRadioSet' class='oj-radioset-no-chrome'
+        value='{{incidentData().priority}}'
+        on-value-changed='[[priorityChange]]'
+        disabled='[[isReadOnlyMode]]'>
+    <oj-option id='high' value='high'>
+      <span alt="high" class="oj-ux-ico-odometer" slot='startIcon'></span>High</oj-option>
+    <oj-option id='normal' value='normal'>
+      <span alt="normal" class="oj-ux-ico-odometer-mid" slot='startIcon'></span>Normal</oj-option>
+    <oj-option id='low' value='low'>
+      <span alt="low" class="oj-ux-ico-odometer-low" slot='startIcon'></span>Low</oj-option>
+  </oj-radioset>
+</div>
+</div>

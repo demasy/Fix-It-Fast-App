@@ -1,0 +1,71 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+
+<div id="incidentMainPage" role="main" class="oj-applayout-content oj-complete">
+
+<div class="demo-full-viewport-height demo-position-fixed demo-full-viewport-width demo-top-nil">
+
+  <div id="detailsPanel" class="push-content-padding-map demo-map-panel oj-bg-neutral-10">
+    <div class="oj-hybrid-padding">
+      <div class="oj-flex-bar oj-typography-body-lg">
+        <div class="oj-flex-bar-start">
+          <oj-bind-text value="[[incidentData().customer.firstName + ' ' + incidentData().customer.lastName]]"></oj-bind-text>
+        </div>
+        <div class="oj-flex-bar-end">
+          <oj-bind-text value="[[incidentData().duration]]"></oj-bind-text>
+        </div>
+      </div>
+      <div class="oj-flex-bar oj-text-sm oj-hybrid-padding-bottom demo-secondary-label oj-text-secondary-color">
+        <div class="oj-flex-bar-start">
+          <oj-bind-text value="[[formattedAddress]]"></oj-bind-text>
+        </div>
+        <div class="oj-flex-bar-end">
+          <oj-bind-text value="[[incidentData().distance]]"></oj-bind-text>
+        </div>
+      </div>
+      <div class="oj-flex-bar oj-text-sm demo-secondary-label oj-text-secondary-color">
+        <div class="oj-flex-bar-start">
+          <oj-bind-text value="[[formattedAddress1]]"></oj-bind-text>
+        </div>
+      </div>
+      <div class="oj-flex-bar">
+        <div class="oj-flex-bar-start oj-sm-align-items-center demo-flex-zero">
+          <span class="oj-ux-ico-phone"></span>
+        </div>
+        <div class="oj-flex-bar-middle">
+          <a :href="[['tel:'+incidentData().customer.mobile]]">
+            <oj-bind-text value="[[incidentData().customer.mobile]]"></oj-bind-text>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="map" class="demo-full-height demo-full-width" data-bind="incidentMap:map"></div>
+
+<!-- Google Maps Marker start -->
+<!--   <div style="display:none;">
+    <div id="incidentMarker" class="oj-flex-bar demo-incident-marker" data-bind="click: showDetails">
+      <div class="demo-incident-marker-duration oj-flex-bar-start">
+        <div data-bind="text: duration" class="oj-hybrid-padding-horizontal"></div>
+      </div>
+      <div class="demo-incident-marker-customer oj-flex-bar-middle">
+        <span data-bind="text: incidentData().customer.firstName + ' ' + incidentData().customer.lastName" class="oj-hybrid-padding-horizontal"></span>
+      </div>
+      <div class="oj-flex-bar-end oj-sm-align-items-center">
+        <div role="presentation" aria-hidden="true" class="oj-ux-ico-chevron-right oj-ux-icon-size-6x"></div>
+      </div>
+    </div>
+  </div> -->
+<!-- Google Maps Marker end -->
+
+</div>
+</div>

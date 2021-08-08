@@ -1,0 +1,1 @@
+export { consumedBindings, providedBindings } from './propertyBinding';

@@ -1,0 +1,683 @@
+/*
+ * Set height for customer list and indexer
+ */
+.demo-customers-container {
+  height: 100vh; 
+  height: calc(var(--vh, 1vh) * 100);
+}
+
+.vh-unit {
+  min-height: calc(var(--vh, 1vh) * 100);
+}
+
+.incident-tab-only-scroll {
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+  overflow-y: auto;
+}
+
+.demo-private-policy {
+  overflow-x: hidden;
+}
+
+.demo-texture-stripe {
+  height: 20px;
+  background-image: url("images/colortop.png");
+}
+
+.demo-rss-icon,
+.demo-twitter-icon,
+.demo-chat-icon,
+.demo-youtube-icon,
+.demo-gplus-icon {
+  height: 52px;
+  width: 52px;
+  border-radius: 50%;
+}
+
+.demo-rss-icon        { background: rgb(var(--oj-palette-danger-rgb-70)) url("images/rss.svg") no-repeat scroll center center; background-size: 52px;}
+.demo-twitter-icon    { background: rgb(var(--oj-palette-info-rgb-70)) url("images/twitter.svg") no-repeat scroll center center; background-size: 52px;}
+.demo-chat-icon       { background: rgb(var(--oj-palette-warning-rgb-50)) url("images/chat.svg") no-repeat scroll center center; background-size: 52px;}
+.demo-youtube-icon    { background: rgb(var(--oj-palette-danger-rgb-90)) url("images/youtube.svg") no-repeat scroll center center; background-size: 52px;}
+.demo-gplus-icon      { background: rgb(var(--oj-palette-info-rgb-100)) url("images/facebook.svg") no-repeat scroll center center; background-size: 52px;}
+
+/* about page content style */
+.demo-about-top-bg {
+  background-size: cover;
+  min-height: 227px;
+  text-align: center;
+}
+/* end of _about.scss */
+
+/* customer page style */
+.demo-customers-no-results {
+  text-align: center;
+}
+
+.demo-customers-no-results img {
+  width: 100%;
+  max-width: 500px;
+}
+/* end of _customers.scss */
+
+/* _global.scss */
+/* global rules */
+html { box-sizing: border-box; }
+
+*, *:before, *:after { box-sizing: inherit; }
+
+.demo-flex-zero {
+  flex: 0 0 auto;
+}
+
+/* offline grayscale effect */
+body.offline .demo-item-not-cached {
+  filter: grayscale(100%);
+  transition: filter 500ms linear;
+}
+
+/* transparent header is used on the tour page and about page */
+.demo-transparent-header {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.demo-dont-break-out {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-word;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+.demo-flex-bar-no-overflow {
+  min-width: 0;
+}
+
+.demo-ellipsis-word-truncation {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+/* --------------------------------- */
+/* camera action sheet style */
+.demo-bottom-offcanvas {
+  z-index: 200;
+}
+
+/* TODO: Check this on hybrid */
+.demo-camera-capture-list {
+  background: rgb(var(--oj-palette-neutral-rgb-0));
+}
+.demo-camera-capture-list li {
+  text-align: center;
+  background: none;
+}
+
+/* --------------------------------- */
+/* icons */
+@font-face {
+  font-family: 'AppFont';
+  src: url('fonts/App_iconfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.demo-icon-font-24 {
+  font-family: AppFont;
+  font-size: 24px;
+  line-height: 1;
+  display: inline-block;
+  font-weight: normal;
+  speak: none;
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+  text-align: center;
+  box-sizing: content-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; 
+}
+
+/* Used for JET Icon used in About screen */
+.demo-icon-font-24:before {
+    display: inline-block; 
+}
+
+.demo-icon, .demo-icon::before {
+  height: 24px;
+  width: 24px;
+}
+
+.demo-jet-icon-24:before {
+  content: "\e90c";
+}
+
+.demo-connection-drawer {
+  z-index: 100;
+  border-top: 1px solid rgb(var(--oj-palette-neutral-rgb-50));
+}
+
+.demo-map-panel {
+  display: none;
+  position: absolute;
+  z-index: 99;
+  opacity: 0.9;
+  width: 100%; 
+}
+
+/* // the app shows how to use both oracle mapviewer and google maps
+// the following rules are for google maps customizations
+
+// Google Maps marker start
+// .demo-incident-marker {
+//   background-color: $neutralColor1;
+//   height: 52px;
+//   min-width: 225px;
+// }
+
+// .demo-incident-marker-duration {
+//   background-color: #3366cc;
+//   color: $neutralColor1;
+//   line-height: 52px;
+// }
+
+// .demo-incident-marker-customer {
+//   line-height: 52px;
+//   font-size: 1.125rem;
+// }
+
+// .gm-style-iw {
+//   width: auto !important;
+//   top: 18px !important;
+//   height: 52px !important;
+//   background-color: $neutralColor1;
+//   border: 1px solid  #e0e1e1;
+//   border-radius: 8px;
+// } */
+/* Google Maps marker end */
+
+/* status and priority selection page */
+.demo-incident-radioset-item {
+  line-height: 3.5rem;
+  height: 3.5rem;
+}
+
+/* ----------------------------------------------------- */
+/* create incident page style */
+.demo-create-incident-page {
+  overflow: auto;
+}
+/* end of _incident.scss */
+
+/* _incidents.scss */
+
+/* // todo: what is the difference between the incident file and the incidents file? */
+
+/* ------------------------------------------------------ */
+/* dashboard style */
+.demo-dashboard-container {
+  overflow: auto;
+  text-align: center;
+  height: 100%;
+}
+
+.demo-dashboard-chart-title {
+  color: rgba(var(--oj-palette-neutral-rgb-20), .6);
+}
+
+.demo-pie-chart-container {
+  position: relative;
+  min-height: 150px;
+}
+
+.demo-pie-chart-container-phone {
+  position: relative;
+  min-height: 100px;
+}
+
+.demo-pie-chart {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+/* This is for dark background color of bar chart container at the bottom section of dashboard. */
+.demo-bar-chart-container {
+  background-color: rgb(var(--oj-palette-neutral-rgb-160));
+  overflow: hidden;
+}
+
+.demo-bar-chart {
+  max-width:500px;
+  width:100%;
+  max-height:200px;
+  height: 200px;
+  margin: auto;
+}
+
+/* -------------------------------------------------------- */
+/* incidents list style */
+
+.demo-icon-25 {
+  width: 32px;
+  height: 25px;
+}
+
+.demo-priority-high-icon {
+  background: url("images/high_priority.svg") no-repeat left center;
+  vertical-align:middle;
+}
+
+.demo-priority-normal-icon {
+  background: url("images/med_priority.svg") no-repeat left center;
+  vertical-align:middle;
+}
+
+.demo-priority-low-icon {
+  background: url("images/low_priority.svg") no-repeat left center;
+  vertical-align:middle;
+}
+
+.demo-status-open-icon {
+  background: url("images/open.svg") no-repeat left center;
+  vertical-align:middle;
+}
+
+.demo-status-closed-icon {
+  background: url("images/closed.svg") no-repeat left center;
+  vertical-align:middle;
+}
+
+.demo-status-accepted-icon {
+  background: url("images/accepted.svg") no-repeat left center;
+  vertical-align:middle;
+}
+
+/* Styling for map container under Map tab */
+.demo-incidents-map {
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+}
+/* end of _incidents.scss */
+
+/* _navdrawer.scss */
+/* Nav Drawer Style */
+
+/* Nav Drawer footer logo icon */
+.demo-ifixitfast-icon {
+  width: 200px;
+  height: 18px;
+  margin: auto;
+  background: url('images/appLayout/navDrawer/ifixitfast.svg') no-repeat center bottom;
+  background-size: auto 18px;
+}
+
+.demo-navdrawer-content-wrapper {
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+}
+
+.demo-navdrawer-content-wrapper::before {
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: url('images/drawer_background@2x.png') no-repeat top left;
+  background-size: cover;
+  z-index: -1;
+}
+
+.demo-navdrawer-content {
+  flex: 1 0 auto;
+  webkit-flex: 1 0 auto;
+}
+
+.demo-navdrawer li {
+  height: 3rem;
+}
+
+/* profile page style */
+/* profile top section background */
+/* Option based on Accent color:  background: linear-gradient(to bottom, #7bb278 83px, #9ed698 83px); */
+/* Option based on Brand color: background: linear-gradient(to bottom, #5e942b 83px, #8dc888 83px); */
+.demo-profile-top-section-gradient-green {
+  background: linear-gradient(to bottom, rgb(var(--oj-palette-brand-rgb-30)) 83px, rgb(var(--oj-palette-brand-rgb-10)) 83px);
+}
+
+.demo-profile-top-section-gradient-brown {
+  background: linear-gradient(to bottom, rgb(var(--oj-palette-neutral-rgb-50)) 83px, rgb(var(--oj-palette-neutral-rgb-20)) 83px);
+}
+
+/* This is for light color profile name in dark color navdrawer */
+.demo-profile-name {
+  color: rgb(var(--oj-palette-neutral-rgb-10));
+}
+
+.demo-hide-photo-input {
+  display: none;
+}
+
+/* Signin page style */
+.demo-tour-bg{
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+  -moz-background-size: 100% 100%;
+  -webkit-background-size: 100% 100%;
+  background-size: 100% 100%  !important;
+  background-position: center;
+}
+.demo-signin-bg{
+  background:linear-gradient(     rgb(var(--oj-palette-neutral-rgb-190)),      rgba(var(--oj-palette-neutral-rgb-190), .3)  ),url(images/SplashLandscape.jpg);
+}
+.demo-signin-bg-mobile {
+  background:linear-gradient(      rgb(var(--oj-palette-neutral-rgb-190)),      rgba(var(--oj-palette-neutral-rgb-190), .3)  ),url(images/Splash_1X.jpg);
+}
+.demo-dashboard-bg-mobile{
+  background-image:url('images/Tour_Dashboard_BG_1X.png');
+}
+.demo-maps-bg-mobile{
+  background-image:url('images/Tour_Maps_BG_1X.png');
+}
+.demo-incidents-bg-mobile{
+  background-image:url('images/Tour_Incidents_BG_1X.png');
+}
+.demo-customers-bg-mobile{
+  background-image:url('images/Tour_Customers_BG_1X.png');
+}
+.demo-dashboard-bg{
+  background-image:url('images/TourDashboardBG.jpg');
+}
+.demo-maps-bg{
+  background-image:url('images/TourMapsBG.jpg');
+}
+.demo-incidents-bg{
+  background-image:url('images/TourIncidentsBG.jpg');
+}
+.demo-customers-bg{
+  background-image:url('images/TourCustomersBG.jpg');
+}
+.demo-filmstrip-item {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100vh;
+  text-align: center;
+  overflow: hidden;
+}
+
+.demo-filmstrip-container {
+  position: relative;
+  height: 12rem;
+}
+
+.demo-overlaid-paging-control {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.demo-stretch-items {
+  height: 100%;
+}
+.demo-siginin-panel {
+  max-width: 75%;
+  margin-top: 15vh !important;
+}
+.footer li {
+  display: inline;
+}
+
+@media only screen and (max-height: 460px) {
+  .demo-circle-flex-item {
+    transform: scale(0.45);
+    transform-origin: 100% 0;
+  }
+}
+@media only screen and (max-height: 430px) {
+  .demo-signin-appname {
+    transform: scale(0.7);
+    transform-origin: 0 100%;
+  }
+}
+@media only screen and (max-height: 410px) {
+  .demo-signin-appname {
+    transform: scale(0.7);
+    transform-origin: 0 100%;
+  }
+}
+
+.demo-tour-launch-action {
+  width: 100%;
+  height:100%;
+  position: relative;
+}
+
+.demo-tour-launch-action h1 {
+  display: inline-block;
+}
+
+/* tour filmstrip style */
+.demo-filmstrip-container { height: 100%; }
+
+.demo-tour-image{
+  width:45vh;
+  margin-top:10vh;
+}
+.demo-overlaid-paging-control {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%); }
+
+
+/* START OF ALL oj- OVERRIDDEN STYLES */
+
+/* Needed to hide the page content while loading */
+.oj-applayout-content:not(.oj-complete) {
+  visibility:hidden;
+}
+
+.demo-offcanvas-outer-wrapper>.oj-offcanvas-glasspane {
+  z-index: calc(var(--oj-private-core-z-index-fixed) + 1);
+}
+
+/* For FIF logo inside circle background - used in About screen */
+.demo-svg-image {
+  height: 12vh;
+  line-height: 1;
+}
+
+/* custom light background styles */
+
+.demo-bg {
+  background-image: url('images/ProductLandscape.jpg') !important;
+}
+.demo-bg-mobile{
+  background-image: url('images/Product_1X.jpg') !important;
+}
+
+[class*="-30bg"][class*="demo-rw-pattern"]:before {
+  filter: opacity(0.8);
+}
+
+/* Change this image for different patterns */
+.demo-rw-pattern6 {
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+  background-position: center;
+  background-repeat: no-repeat;
+  -moz-background-size: 100% 100%;
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100% !important;;
+  position:absolute;
+  top:0px;
+  left:0px;
+  width:100%;
+}
+
+[class*="demo-rw-pattern"]:before {
+  mix-blend-mode: overlay;
+}
+
+.demo-rw-pattern-25p:before {
+  opacity: .5;
+}
+
+[class*="demo-rw-pattern"]:before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  background-repeat: repeat;
+}
+/* custom light background pattern styles end */
+
+.demo-incidentslist-icon-badge-container {
+  width: 50px;
+  min-width: 50px;
+}
+
+
+.demo-createincident-photo {
+  max-width: 100%;
+  max-height: 50vh; /* to make create incident photo screen should not have scroll bar after attaching image*/
+           
+}
+
+/* CSP issue fixes */
+
+.demo-aboutcontent-fixitfast-text {
+  font-weight: 400;
+}
+
+.demo-aboutdemo-container {
+  overflow-x: hidden;
+}
+
+.demo-text-align {
+  text-align: center;
+}
+
+.demo-aboutdemo-vertical-align {
+  vertical-align: bottom;
+}
+
+.demo-aboutlist-listview {
+  border: none;
+  overflow: auto;
+}
+
+.demo-overflow-auto {
+  overflow: auto;
+}
+
+.demo-margin-auto {
+  margin: auto;
+}
+
+.demo-position-relative {
+  position: relative;
+}
+
+.demo-position-fixed {
+  position: fixed;
+}
+
+.demo-create-incident-edit-btn {
+  position: absolute; right:0; top: 0;
+}
+
+.demo-create-incident-submit {
+  width: 40%; 
+  margin: auto; 
+  margin-top: 40px;
+}
+
+.demo-full-width {
+  width: 100%;
+}
+
+.demo-full-height {
+  height: 100%;
+}
+
+.demo-full-viewport-height {
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+}
+
+.demo-min-height-100vh {
+  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
+}
+
+.demo-full-viewport-width {
+  width: 100vw;
+}
+
+.demo-top-nil {
+  top: 0;
+}
+
+.demo-height-48px {
+  height: 48px;
+}
+
+.demo-width-48px {
+  width: 48px;
+}
+
+.demo-line-height-48px {
+  line-height: 48px;
+}
+
+.demo-display-block {
+  display: block;
+}
+
+.demo-display-none {
+  display: none;
+}
+
+.demo-border-none {
+  border: none;
+}
+.demo-height-nil {
+  height: 0;
+}
+
+.demo-width-nil {
+  width: 0;
+}
+
+.demo-width-32px {
+  width: 32px;
+}
+
+.demo-width-150px {
+  width: 150px
+}
+
+.demo-margin-bottom-48px {
+  margin-bottom: 48px;
+}
+
+.demo-padding-left-57px {
+  padding-left:57px;
+}
+
+.demo-padding-top-4rem {
+  padding-top: 4rem;
+}
+
+/* CSP issue fixes end */

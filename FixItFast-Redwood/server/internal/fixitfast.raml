@@ -1,0 +1,3088 @@
+#%RAML 0.8
+title: FixItFast
+version: 4.0
+baseUri: /mobile/custom/fixitfast
+protocols: [HTTPS]
+mediaType: "application/json"
+schemas:
+  - incidents: |
+      {
+        "$schema": "http://json-schema.org/draft-04/hyper-schema#",
+        "id": "incidents",
+        "title": "Incidents Result",
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "description": "The number of incidents returned"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "incident-summary"
+            },
+            "description": "List of incidents with summary information"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "links": [
+          {
+            "rel":          "self",
+            "title":        "Incidents",
+            "href":         "/incidents",
+            "method":       "GET"
+          },
+          {
+            "rel":          "create",
+            "title":        "Create Incident",
+            "href":         "/incidents",
+            "method":       "POST",
+            "schema":       {"$ref": "new-incident"},
+            "targetSchema": {"$ref": "incident"}
+          }
+        ]
+      }
+      
+  - incident-summary: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "incident",
+        "title": "Incident Detail",
+        "type": "object",
+        "properties": {
+          "id": {
+             "type": "string",
+             "description": "Unique incident ticket number"
+          },
+          "problem": {
+             "type": "string",
+             "description": "Short description of the incident"
+          },
+          "lastUpdatedOn": {
+             "type": "string",
+             "format": "date-time",
+             "description": "When the incident was last updated"
+          },
+          "status": {
+             "type": "string",
+             "description": "Incident status: 1=open, 2=accepted, 3=fixed",
+             "enum": [
+                "open",
+                "accepted",
+                "fixed"
+             ]
+          },
+          "priority": {
+             "type": "string",
+             "description": "Incident priority: 1=high, 2=normal, 3=low",
+             "enum": [
+                "low",
+                "normal",
+                "high"
+             ]
+          },
+          "category": {
+             "type": "string",
+             "description": "Incident category: appliance, electrical, general, heatingcooling, plumbing",
+             "enum": [
+                "appliance",
+                "electrical",
+                "general",
+                "heatingcooling",
+                "plumbing"
+             ]
+          },
+          "customer": {
+            "$ref": "incident-customer",
+            "title": "Details of customer who logged the incident"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "links": [
+          {
+            "rel": "canonical",
+            "title": "Incident",
+            "href": "/incidents/{id}",
+            "method": "GET",
+            "targetSchema": {"$ref": "incident"}
+          },
+          {
+            "rel": "closeIncident",
+            "title": "Close an incident",
+            "href": "/incidents/{id}/closeIncident",
+            "method": "POST"
+          },
+          {
+            "rel": "delete",
+            "title": "Delete an incident",
+            "href": "/incidents/{id}",
+            "method": "DELETE"
+          },
+          {
+            "rel": "edit",
+            "title": "Update an incident",
+            "href": "/incidents/{id}",
+            "method": "PUT",
+            "mediaType": "application/json",
+            "schema": {"$ref": "patch-incident"},
+            "targetSchema": {"$ref": "incident"}
+          },
+          {
+            "rel": "parent",
+            "title": "Incidents",
+            "href": "/incidents",
+            "method": "GET",
+            "mediaType": "application/json",
+            "targetSchema": {"$ref": "incidents"}
+          }
+        ]
+      }
+      
+  - incident: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "incident",
+        "title": "Incident Detail",
+        "type": "object",
+        "properties": {
+          "id": {
+             "type": "string",
+             "description": "Unique incident ticket number"
+          },
+          "problem": {
+             "type": "string",
+             "description": "Short description of the incident"
+          },
+          "description": {
+             "type": "string",
+             "description": "Detailed description of the incident"
+          },
+          "createdOn": {
+             "type": "string",
+             "format": "date-time",
+             "description": "When the incident was logged"
+          },
+          "lastUpdatedOn": {
+             "type": "string",
+             "format": "date-time",
+             "description": "When the incident was last updated"
+          },
+          "picture": {
+            "type": "string",
+            "media": {
+                "binaryEncoding": "base64",
+                "type": "image/png"
+            },
+            "description": "A picture uploaded to the incident activity"
+          },
+          "status": {
+             "type": "string",
+             "description": "Incident status: 1=open, 2=accepted, 3=fixed",
+             "enum": [
+                "open",
+                "accepted",
+                "fixed"
+             ]
+          },
+          "priority": {
+             "type": "string",
+             "description": "Incident priority: 1=high, 2=normal, 3=low",
+             "enum": [
+                "low",
+                "normal",
+                "high"
+             ]
+          },
+          "category": {
+             "type": "string",
+             "description": "Incident category: appliance, electrical, general, heatingcooling, plumbing",
+             "enum": [
+                "appliance",
+                "electrical",
+                "general",
+                "heatingcooling",
+                "plumbing"
+             ]
+          },
+          "customer": {
+            "$ref": "incident-customer",
+            "title": "Details of customer who logged the incident"
+          },
+          "location": {
+            "$ref": "IncidentLocation",
+            "title": "Location where the incident occurred"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "title": "Incident",
+            "href": "/incidents/{id}",
+            "method": "GET",
+            "targetSchema": {"$ref": "incident"}
+          },
+          {
+            "rel": "closeIncident",
+            "title": "Close an incident",
+            "href": "/incidents/{id}/closeIncident",
+            "method": "POST"
+          },
+          {
+            "rel": "delete",
+            "title": "Delete an incident",
+            "href": "/incidents/{id}",
+            "method": "DELETE"
+          },
+          {
+            "rel": "edit",
+            "title": "Update an incident",
+            "href": "/incidents/{id}",
+            "method": "PUT",
+            "mediaType": "application/json",
+            "schema": {"$ref": "patch-incident"},
+            "targetSchema": {"$ref": "incident"}
+          },
+          {
+            "rel": "parent",
+            "title": "Incidents",
+            "href": "/incidents",
+            "method": "GET",
+            "mediaType": "application/json",
+            "targetSchema": {"$ref": "incidents"}
+          }
+        ]
+      }
+      
+  - new-incident: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "new-incident",
+        "title": "New Incident",
+        "type": "object",
+        "properties": {
+          "problem": {
+             "type": "string",
+             "description": "Short description of the incident"
+          },
+          "description": {
+             "type": "string",
+             "description": "Detailed description of the incident"
+          },
+          "priority": {
+             "type": "string",
+             "description": "Incident priority: 1=high, 2=normal, 3=low",
+             "enum": [
+                "low",
+                "normal",
+                "high"
+             ]
+          },
+          "category": {
+             "type": "string",
+             "description": "Incident category: appliance, electrical, general, heatingcooling, plumbing",
+             "enum": [
+                "appliance",
+                "electrical",
+                "general",
+                "heatingcooling",
+                "plumbing"
+             ]
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "required": ["problem"],
+        "additionalProperties": false
+      }
+      
+  - patch-incident: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "patch-incident",
+        "title": "Update Incident",
+        "type": "object",
+        "properties": {
+          "problem": {
+             "type": "string",
+             "description": "Short description of the incident"
+          },
+          "description": {
+             "type": "string",
+             "description": "Detailed description of the incident"
+          },
+          "picture": {
+            "type": "string",
+            "media": {
+                "binaryEncoding": "base64",
+                "type": "image/png"
+            },
+            "description": "A picture uploaded to the incident activity"
+          },
+          "status": {
+             "type": "string",
+             "description": "Incident status: 1=open, 2=accepted, 3=fixed",
+             "enum": [
+                "open",
+                "accepted",
+                "fixed"
+             ]
+          },
+          "priority": {
+             "type": "string",
+             "description": "Incident priority: 1=high, 2=normal, 3=low",
+             "enum": [
+                "low",
+                "normal",
+                "high"
+             ]
+          },
+          "category": {
+             "type": "string",
+             "description": "Incident category: appliance, electrical, general, heatingcooling, plumbing",
+             "enum": [
+                "appliance",
+                "electrical",
+                "general",
+                "heatingcooling",
+                "plumbing"
+             ]
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "minProperties": 1,
+        "additionalProperties": false
+      }
+      
+  - incident-customer: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "incident-customer",
+        "title": "Customer Reporting Incident",
+        "type": "object",
+      
+        "allOf": [
+            {"$ref": "person"}
+        ],
+        "properties": {
+          "id": {
+             "type": "string",
+             "description": "The customer ID"
+          },
+          "home": {
+            "type": "string",
+            "description": "The customer's home phone number"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "required": ["username", "firstName", "lastName"],
+        "links": [
+          {
+            "rel": "canonical",
+            "title": "Customer Details",
+            "href": "/customers/{id}",
+            "method": "GET",
+            "targetSchema": {"$ref": "customer"}
+          }
+        ]
+      }
+      
+  - IncidentLocation: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "IncidentLocation",
+        "title": "Incident Location",
+        "description": "The physical address where the incident occurred",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Location Identifier"
+          },
+          "formattedAddress": {
+            "type": "string",
+            "description": "Formatted address"
+          },
+          "latitude": {
+             "type": "string",
+             "description": "The y coordinate (latitude) of the location point data"
+          },
+          "longitude": {
+             "type": "string",
+             "description": "The x coordinate (longitude) of the location point data"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "links": [
+          {
+            "rel": "canonical",
+            "title": "Geographical Location",
+            "href": "/locations/{id}"
+          }
+        ]
+      }
+      
+  - incident-activities: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "incident-activities",
+        "title": "Incident Activities",
+        "type": "array",
+        "description": "A list of incident activities, both system and user generated",
+        "items": {
+          "$ref": "incident-activity"
+        },
+        "links": [
+          {
+            "rel": "self",
+            "title": "Incident Activities",
+            "href": "/incidents/{id}/activities",
+            "method": "GET",
+            "targetSchema": {"$ref": "incident-activities"}
+          },
+          {
+            "rel": "create",
+            "title": "Incident Activity",
+            "href": "/incidents/{id}/activities",
+            "method": "POST",
+            "encType": "application/x-www-form-urlencoded",
+            "schema": {
+              "properties": {
+                "comment": {
+                    "type": "string",
+                    "description": "A brief comment posted by the user",
+                    "maxLength": "100"
+                },
+                "picture": {
+                  "type": "string",
+                  "media": {
+                      "binaryEncoding": "base64",
+                      "type": "image/png"
+                  },
+                  "description": "A picture uploaded to the incident activity"
+                },
+                "revNum": {
+                  "type": "integer",
+                  "description": "Attribute used for offline cases and incremented when data is updated on the server"
+                }
+              }
+            },
+            "targetSchema": {"$ref": "incident-activity"}
+          }
+        ]
+      }
+      
+  - incident-activity: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "incident-activity",
+        "title": "Incident Activity",
+        "type": "object",
+        "description": "A single activity reported on an incident",
+        "properties": {
+            "id": {
+               "type": "string",
+               "description": "Unique incident activity identifier"
+            },
+            "firstName": {
+               "type": "string",
+               "description": "The first name of the person who created the activity"
+            },
+            "lastName": {
+               "type": "string",
+               "description": "The person's last name"
+            },
+            "userId": {
+               "type": "string",
+               "description": "The person's unique identifier"
+            },
+            "role": {
+               "type": "string",
+               "description": "The person's role, e.g. Customer or Field Service"
+            },
+            "comment": {
+                "type": "string",
+                "description": "A brief comment posted by the user",
+                "maxLength": 100
+            },
+            "createdOn": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Date when the activity was created"
+            },
+            "picture": {
+              "type": "string",
+              "media": {
+                  "binaryEncoding": "base64",
+                  "type": "image/png"
+              },
+              "description": "A picture uploaded to the incident activity"
+            },
+            "revNum": {
+              "type": "integer",
+              "description": "Attribute used for offline cases and incremented when data is updated on the server"
+            }
+        }
+      }
+      
+  - patch-incident-activity: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "patch-incident-activity",
+        "title": "Update Incident Activity",
+        "type": "object",
+        "description": "A single activity reported on an incident",
+        "properties": {
+          "comment": {
+              "type": "string",
+              "description": "A brief comment posted by the user",
+              "maxLength": 100
+          },
+          "picture": {
+            "type": "string",
+            "media": {
+                "binaryEncoding": "base64",
+                "type": "image/png"
+            },
+            "description": "A picture uploaded to the incident activity"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        }
+      }      
+      
+  - location: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "location",
+        "title": "Geographical Location",
+        "description": "The physical address of the location along with the geo coordinates",
+        "type": "object",
+      
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "A unique location ID identifying a single address"
+          },
+          "formattedAddress": {
+            "type": "string",
+            "description": "The fully formatted address"
+          },
+          "street1": {
+            "type": "string",
+            "description": "Street line 1"
+          },
+          "street2": {
+            "type": "string",
+            "description": "Street line 2"
+          },
+          "city": {
+            "type": "string",
+            "description": "City"
+          },
+          "state": {
+            "type": "string",
+            "description": "State"
+          },
+          "zip": {
+            "type": "string",
+            "description": "Zip"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country"
+          },
+          "latitude": {
+             "type": "string",
+             "description": "The y coordinate (latitude) of the location point data"
+          },
+          "longitude": {
+             "type": "string",
+             "description": "The x coordinate (longitude) of the location point data"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "title": "Geographical Location",
+            "href": "/locations/{id}"
+          }
+        ]
+      }
+      
+  - customers: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "customers",
+        "title": "Customers",
+        "type": "object",
+        "properties": {
+          "count": {
+             "type": "integer",
+             "description": "The number of customers returned in the response"
+          },
+          "result": {
+             "type": "array",
+             "items": {
+                "$ref": "customer"
+             },
+             "description": "The list of customers"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "title": "Customers",
+            "href": "/customers",
+            "method": "GET",
+            "targetSchema": {"$ref": "customers"}
+          }
+        ]
+      }
+      
+  - person: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "person",
+        "title": "Person",
+        "type": "object",
+        "description": "A person object that includes proeprties common to any person",
+        "properties": {
+          "username": {
+             "type": "string",
+             "description": "The username of the person"
+          },
+          "firstName": {
+             "type": "string",
+             "description": "The person's first name"
+          },
+          "lastName": {
+             "type": "string",
+             "description": "The person's last name"
+          },
+          "email": {
+             "type": "string",
+             "format": "email",
+             "description": "The person's email address"
+          },
+          "mobile": {
+            "type": "string",
+            "description": "The person's mobile phone number"
+          },
+          "photo":{
+            "type": "string",
+            "media": {
+                "binaryEncoding": "base64",
+                "type": "image/png"
+            },
+            "description": "A photo of the person"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "required": ["username", "firstName", "lastName"],
+        "additionalProperties": true
+      }
+      
+  - customer: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "customer",
+        "title": "Customer",
+        "type": "object",
+        "allOf": [
+            {"$ref": "person"}
+        ],
+        "properties": {
+          "id": {
+             "type": "string",
+             "description": "The customer ID"
+          },
+          "address": {
+            "$ref": "location",
+            "description": "The primary address of the customer"
+          },
+          "home": {
+            "type": "string",
+            "description": "The customer's home phone number"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "required": ["id", "username", "firstName", "lastName", "mobile", "email"],
+        "links": [
+          {
+            "rel": "self",
+            "title": "Customer",
+            "href": "/customers/{id}",
+            "method": "GET",
+            "targetSchema": {"$ref": "customer"}
+          }
+        ]
+      
+      }
+      
+  - new-customer: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "new-customer",
+        "title": "New Customer",
+        "type": "object",
+        "properties": {
+          "firstName": {
+             "type": "string",
+             "description": "The person's first name"
+          },
+          "lastName": {
+             "type": "string",
+             "description": "The person's last name"
+          },
+          "email": {
+             "type": "string",
+             "format": "email",
+             "description": "The person's email address"
+          },
+          "home": {
+            "type": "string",
+            "description": "The customer's home phone number"
+          },
+          "mobile": {
+            "type": "string",
+            "description": "The person's mobile phone number"
+          },
+          "photo":{
+            "type": "string",
+            "media": {
+                "binaryEncoding": "base64",
+                "type": "image/png"
+            },
+            "description": "A photo of the person"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "required": ["firstName", "lastName"],
+        "additionalProperties": false
+      }
+      
+  - patch-customer: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "patch-customer",
+        "title": "Update Customer",
+        "type": "object",
+        "allOf": [
+            {"$ref": "person"}
+        ],
+        "properties": {
+          "address": {
+            "$ref": "location",
+            "description": "The primary address of the customer"
+          },
+          "home": {
+            "type": "string",
+            "description": "The customer's home phone number"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "minProperties": 1,
+        "additionalProperties": false
+      }
+      
+  - technician: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "technician",
+        "title": "Technician Profile",
+        "allOf": [
+            {"$ref": "person"}
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+             "type": "number",
+             "description": "The technician ID"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["Field Service", "Online Help"],
+            "description": "the role of technician"
+          },
+          "location": {
+            "$ref": "location",
+            "description": "The primary location of the technician"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "required": ["id", "username", "firstName", "lastName", "mobile", "email", "role"],
+        "links": [
+          {
+            "rel": "self",
+            "title": "Technician",
+            "href": "/users/~",
+            "method": "GET",
+            "targetSchema": {"$ref": "technician"}
+          }
+        ]
+      }
+      
+  - patch-technician: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "patch-technician",
+        "allOf": [
+            {"$ref": "person"}
+        ],
+        "title": "Update Technician",
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": ["Field Service", "Online Help"],
+            "description": "role of technician"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "minProperties": 1,
+        "additionalProperties": false
+      }
+      
+  - stats: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "stats",
+        "title": "Analytics",
+        "type": "object",
+        "properties": {
+          "metrics": {
+            "type": "array",
+            "description": "Metrics are individual measurements related to incident activity, techncian performance",
+            "items": {
+              "type": "object",
+              "properties": {
+                "month": {
+                  "type": "string",
+                  "description": "Date Dimension for which a data point is provided"
+                },
+                "technician": {
+                  "type": "string",
+                  "description": "Technician for whom the data is provided"
+                },
+                "radius": {
+                  "type": "number",
+                  "description": "Radius in miles from the technician location, where incidents were reported"
+                },
+                "incidentsAssigned": {
+                  "type": "number",
+                  "description": "Incidents Assigned to Technician"
+                },
+                "incidentsClosed": {
+                  "type": "number",
+                  "description": "Incidents Closed by Technician"
+                },
+                "revNum": {
+                  "type": "integer",
+                  "description": "Attribute used for offline cases and incremented when data is updated on the server"
+                }
+              }
+            }
+          }
+        }
+      }
+      
+  - incidentsStats: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "incidentsStats",
+        "title": "Incident Statistics",
+        "type": "object",
+        "description": "Incident counts by priority",
+        "properties": {
+          "incidentCount": {
+            "type": "object",
+            "description": "The number of incidents for each priority",
+            "properties": {
+              "high": {
+                "type": "integer",
+                "description": "The number of incidents with priority high"
+              },
+              "normal": {
+                "type": "integer",
+                "description": "The number of incidents with priority normal"
+              },
+              "low": {
+                "type": "integer",
+                "description": "The number of incidents with priority low"
+              },
+              "revNum": {
+                "type": "integer",
+                "description": "Attribute used for offline cases and incremented when data is updated on the server"
+              }
+            }
+          }
+        },
+        "links": [
+          {
+           "rel": "self",
+           "title": "Incidents Statistics",
+           "href": "/stats/incidents",
+           "method": "GET",
+           "targetSchema": {"$ref": "incidentsStats"}
+          }
+        ]
+      }
+      
+  - incidentGroup: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "incidentGroup",
+        "title": "Incident Count Metric",
+        "type": "object",
+        "description": "Incident count for a single priority",
+        "properties": {
+          "priority": {
+            "type": "string",
+            "description": "The property used to group incidents by",
+             "enum": [
+                "low",
+                "normal",
+                "high"
+             ]
+          },
+          "incidentCount": {
+            "type": "integer",
+            "description": "The number of incidents part of the current group"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        }
+      }
+      
+  - technicianStats: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "technicianStats",
+        "title": "Technician Stats against group average",
+        "type": "object",
+        "properties": {
+          "dateDimension": {
+            "type": "string",
+            "enum": [
+              "month"
+            ],
+            "description": "The date dimension used as the unit of measurement for the performance data"
+          },
+          "technician": {
+            "$ref": "person",
+            "title": "Quick Details of technician"
+          },
+          "metrics": {
+            "type": "array",
+            "description": "Metrics are individual measurements related to incident activity, technician performance",
+            "items": {
+                "$ref": "technicianStatsRow"
+            }
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        },
+        "additionalProperties": true,
+        "links": [
+          {
+            "rel": "self",
+            "title": "Technician Statistics",
+            "href": "/stats/technician",
+            "method": "GET",
+            "targetSchema": {"$ref": "technicianStats"}
+          }
+        ]
+      }
+      
+  - technicianStatsRow: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "technicianStatsRow",
+        "title": "Row",
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "description": "Time Slice for which data is provided"
+          },
+          "technician": {
+            "type": "string",
+            "description": "Technician for whom the data is provided. Or 'Average' to denote the average for all technicians"
+          },
+          "incidentCount": {
+            "type": "number",
+            "description": "Incidents Count Data"
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        }
+      }
+      
+  - performanceData: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "performanceData",
+        "title": "Performance data",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "A title identifying the entity to which the data applies to"
+          },
+          "results": {
+            "type": "array",
+            "description": "An array of results data",
+            "items": {
+              "type": "number"
+            }
+          },
+          "revNum": {
+            "type": "integer",
+            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+          }
+        }
+      }
+      
+resourceTypes:
+  - collection:
+      usage: collection with GET and optional POST endpoint
+      description: List of <<path-name>>.
+      get: 
+       description: Get a list of <<path-name>>.
+       responses: 
+        200: 
+         body: 
+          application/json: 
+           schema: <<path-name>>
+           example: <<example-collection>>
+      post?: 
+       description: Create a new <<item-path-name>>
+       body: 
+        application/json: 
+         schema: new-<<item-path-name>>
+         example: <<example-newitem>>
+       responses: 
+        201: 
+         headers: 
+          Location: 
+           description: The relative URL of the created item.
+           type: string
+           required: true
+           example: /incidents/inc-345
+         body: 
+          application/json: 
+           schema: <<item-path-name>>
+           example: <<example-item>>
+      
+  - item:
+      usage: singular item with GET and optional PUT, PATCH and DELETE endpoints
+      description: A single <<item-path-name>>
+      get: 
+       description: Get a single <<item-path-name>>.
+       responses: 
+        200: 
+         body: 
+          application/json: 
+           schema: <<item-path-name>>
+           example: <<example-item>>
+        404: 
+         body: 
+          application/json: 
+           example: |
+            {"message": "<<item-path-name>> not found" }         
+      patch?: 
+       description: Update a specific <<item-path-name>>.
+       body: 
+        application/json: 
+         schema: patch-<<item-path-name>>
+         example: <<example-patchitem>>
+       responses: 
+        200: 
+         body: 
+          application/json: 
+           schema: <<item-path-name>>
+           example: <<example-item>>
+        404: 
+         body: 
+          application/json: 
+           example: |
+            {"message": "Unable to find <<item-path-name>> record."}         
+      put?: 
+       description: Update a specific <<item-path-name>>.
+       body: 
+        application/json: 
+         schema: patch-<<item-path-name>>
+         example: <<example-patchitem>>
+       responses: 
+        200: 
+         body: 
+          application/json: 
+           schema: <<item-path-name>>
+           example: <<example-item>>
+        404: 
+         body: 
+          application/json: 
+           example: |
+            {"message": "Unable to find <<item-path-name>> record."}         
+      delete: 
+       description: Remove/close the specific <<item-path-name>>.
+       responses: 
+        204: 
+         description: The specific <<item-path-name>> item was deleted successfully.
+      
+  - collectionWithFormPost:
+      usage: collection with GET and optional POST endpoint with content type application/x-www-form-urlencoded.
+      description: List of <<path-name>>.
+      get: 
+       description: Get a list of <<path-name>>.
+       responses: 
+        200: 
+         body: 
+          application/json: 
+           schema: <<path-name>>
+           example: <<example-collection>>
+      post?: 
+       description: Create/add a new <<item-path-name>>
+       body: 
+        application/x-www-form-urlencoded: 
+       responses: 
+        201: 
+         headers: 
+          Location: 
+           description: The relative URL of the created item.
+           type: string
+           required: true
+           example: /incidents/inc-345
+         body: 
+          application/json: 
+           schema: <<item-path-name>>
+           example: <<example-item>>
+      
+/incidents:
+  displayName: Incidents
+  description: |
+    List of incidents.
+    
+  type:
+    collection:
+      path-name: incidents
+      item-path-name: incident
+      example-collection: |
+        {
+          "count":3,
+          "result": [
+              {
+                "id": "inc-101",
+                "problem": "Incident Foo",
+                "lastUpdatedOn": "2015-08-20",
+                "status": "open",
+                "priority": "low",
+                "category", "general",
+                "customer": {
+                  "id": "cus-101",
+                  "username": "julie.simpson",
+                  "firstName": "Julie",
+                  "lastName": "Simpson",
+                  "mobile": "6505067000",
+                  "home": "5105552121",
+                  "email": "julie.simpson@springtime.com"
+                }
+              },
+              {
+                "id": "inc-102",
+                "problem": "Incident Bar",
+                "lastUpdatedOn": "2015-08-25",
+                "status": "accepted",
+                "priority": "normal",
+                "category", "general",
+                "customer": {
+                  "id": "cus-102",
+                  "username": "lisa.matthews",
+                  "firstName": "Lisa",
+                  "lastName": "Matthews",
+                  "mobile": "6505067000",
+                  "home": "5105552121",
+                  "email": "lisa.matthews@gathernet.com"
+                }
+              },
+              {
+                "id": "inc-103",
+                "problem": "Incident Baz",
+                "lastUpdatedOn": "2015-08-26",
+                "status": "fixed",
+                "priority": "high",
+                "category", "general",
+                "customer": {
+                  "id": "cus-103",
+                  "username": "apu.shah",
+                  "firstName": "Apu",
+                  "lastName": "Shah",
+                  "mobile": "6505067000",
+                  "home": "5105552121",
+                  "email": "apu.shah@yellowpages.com"
+                }
+              }
+          ]
+        }
+        
+      example-newitem: |
+        {
+          "problem": "Incident New",
+          "description": "Your Honor, it's not easy being my parents.",
+          "priority": "high"
+        }
+        
+      example-item: |
+        {
+          "id": "inc-201",
+          "problem": "Incident New",
+          "description": "Your Honor, it's not easy being my parents.",
+          "createdOn": "2015-08-18",
+          "lastUpdatedOn": "2015-08-22",
+          "picture": "data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCARXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAKgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/iB+hJQ0NfUFJPRklMRQABAQAAB9hhcHBsAiAAAG1udHJSR0IgWFlaIAfZAAIAGQALABoAC2Fjc3BBUFBMAAAAAGFwcGwAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2Rlc2MAAAEIAAAAb2RzY20AAAF4AAAFnGNwcnQAAAcUAAAAOHd0cHQAAAdMAAAAFHJYWVoAAAdgAAAAFGdYWVoAAAd0AAAAFGJYWVoAAAeIAAAAFHJUUkMAAAecAAAADmNoYWQAAAesAAAALGJUUkMAAAecAAAADmdUUkMAAAecAAAADmRlc2MAAAAAAAAAFEdlbmVyaWMgUkdCIFByb2ZpbGUAAAAAAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVjAAAAAAAAAB8AAAAMc2tTSwAAACgAAAGEZGFESwAAAC4AAAGsY2FFUwAAACQAAAHadmlWTgAAACQAAAH+cHRCUgAAACYAAAIidWtVQQAAACoAAAJIZnJGVQAAACgAAAJyaHVIVQAAACgAAAKaemhUVwAAABYAAALCbmJOTwAAACYAAALYY3NDWgAAACIAAAL+aGVJTAAAAB4AAAMgaXRJVAAAACgAAAM+cm9STwAAACQAAANmZGVERQAAACwAAAOKa29LUgAAABYAAAO2c3ZTRQAAACYAAALYemhDTgAAABYAAAPMamFKUAAAABoAAAPiZWxHUgAAACIAAAP8cHRQTwAAACYAAAQebmxOTAAAACgAAAREZXNFUwAAACYAAAQedGhUSAAAACQAAARsdHJUUgAAACIAAASQZmlGSQAAACgAAASyaHJIUgAAACgAAATacGxQTAAAACwAAAUCcnVSVQAAACIAAAUuYXJFRwAAACYAAAVQZW5VUwAAACYAAAV2AFYBYQBlAG8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbABHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGUAUABlAHIAZgBpAGwAIABSAEcAQgAgAGcAZQBuAOgAcgBpAGMAQx6lAHUAIABoAOwAbgBoACAAUgBHAEIAIABDAGgAdQBuAGcAUABlAHIAZgBpAGwAIABSAEcAQgAgAEcAZQBuAOkAcgBpAGMAbwQXBDAEMwQwBDsETAQ9BDgEOQAgBD8EQAQ+BEQEMAQ5BDsAIABSAEcAQgBQAHIAbwBmAGkAbAAgAGcA6QBuAOkAcgBpAHEAdQBlACAAUgBWAEIAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBskBp1KAAgAFIARwBCACCCcl9pY8+P8ABHAGUAbgBlAHIAaQBzAGsAIABSAEcAQgAtAHAAcgBvAGYAaQBsAE8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbAXkBegF1QXkBdkF3AAgAFIARwBCACAF2wXcBdwF2QBQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8AUAByAG8AZgBpAGwAIABSAEcAQgAgAGcAZQBuAGUAcgBpAGMAQQBsAGwAZwBlAG0AZQBpAG4AZQBzACAAUgBHAEIALQBQAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3xmbpAaACAAUgBHAEIAIGPPj/Blh072TgCCLAAgAFIARwBCACAw1zDtMNUwoTCkMOsDkwO1A70DuQO6A8wAIAPAA8EDvwPGA68DuwAgAFIARwBCAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDpAHIAaQBjAG8AQQBsAGcAZQBtAGUAZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAZQBsDkIOGw4jDkQOHw4lDkwAIABSAEcAQgAgDhcOMQ5IDicORA4bAEcAZQBuAGUAbAAgAFIARwBCACAAUAByAG8AZgBpAGwAaQBZAGwAZQBpAG4AZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAaQBsAGkARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZXRleHQAAAAAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC4AWFlaIAAAAAAAAPNSAAEAAAABFs9YWVogAAAAAAAAdE0AAD3uAAAD0FhZWiAAAAAAAABadQAArHMAABc0WFlaIAAAAAAAACgaAAAVnwAAuDZjdXJ2AAAAAAAAAAEBzQAAc2YzMgAAAAAAAQxCAAAF3v//8yYAAAeSAAD9kf//+6L///2jAAAD3AAAwGz/wAARCAAUABQDARIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9sAQwAICAgICAgNCAgNEg0NDRIZEhISEhkfGRkZGRkfJh8fHx8fHyYmJiYmJiYmLi4uLi4uNTU1NTU8PDw8PDw8PDw8/9sAQwEJCgoPDg8aDg4aPiojKj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+/90ABAAD/9oADAMBAAIRAxEAPwDd+ME15Y6dY39jd3Fs/nmIiGRkBVlLZOMZI28fjXeeJdEttZSya62lLO6SfY/R8Art+pzx70Ac58LWuZvDIvry5nuZZ5nyZnL7Qh2gLnkDjJ968Pv7fxtptreRJDf2ti8zSMhztG58jJX8M4oA+uaht8+RH/uj+VAH/9D2TXtJt9Ys0tbl5EVZopQY22nKMGHY8ZrUuP8AV/8AAl/nQBNgEYNLQAUUAf/Z",
+          "status": "open",
+          "priority": "high",
+          "category", "general",
+          "customer": {
+            "id": "cus-101",
+            "username": "julie.simpson",
+            "firstName": "Julie",
+            "lastName": "Simpson",
+            "mobile": "6505067000",
+            "home": "5105552121",
+            "email": "julie.simpson@springtime.com"
+          },
+          "location": {
+            "id": "loc-5",
+            "formattedAddress": "4500 Broadway,\nOakland, CA 94611",
+            "latitude": "37.832892",
+            "longitude": "-122.253260"
+          }
+        }
+        
+  get:
+    description: |
+      Get a list of incidents.
+      
+    protocols: [HTTPS]
+    queryParameters:
+      technician:
+        displayName: Technician User Name
+        description: |
+          The username of the technician or authenticated user whose incidents are retrieved. The special
+          value "~" can be used to indicate the authenticated user.
+          
+        type: string
+        enum: ['~']
+        example: |
+          technician=~
+          
+        required: true
+      filterBy:
+        displayName: Filter By
+        description: |
+          A JSON string of colon separated name and value pair used to filter incidents results, where the
+          value is comma separated. The default property is 'status' and default values 'open' and 'accepted'.
+          
+        type: string
+        example: |
+          filterBy={status:["open","accepted"]}
+          
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            schema: incidents
+            example: |
+              {
+                "count": 3,
+                "result": [
+                  {
+                    "id": "inc-101",
+                    "problem": "Incident Foo",
+                    "lastUpdatedOn": "2015-08-20",
+                    "status": "open",
+                    "priority": "low",
+                    "category": "general",
+                    "customer": {
+                      "id": "cus-101",
+                      "username": "julie.simpson",
+                      "firstName": "Julie",
+                      "lastName": "Simpson",
+                      "mobile": "6505067000",
+                      "home": "5105552121",
+                      "email": "julie.simpson@springtime.com"
+                    }
+                  },
+                  {
+                    "id": "inc-102",
+                    "problem": "Incident Bar",
+                    "lastUpdatedOn": "2015-08-25",
+                    "status": "accepted",
+                    "priority": "normal",
+                    "category": "general",
+                    "customer": {
+                      "id": "cus-102",
+                      "username": "lisa.matthews",
+                      "firstName": "Lisa",
+                      "lastName": "Matthews",
+                      "mobile": "6505067000",
+                      "home": "5105552121",
+                      "email": "lisa.matthews@gathernet.com"
+                    }
+                  },
+                  {
+                    "id": "inc-103",
+                    "problem": "Incident Baz",
+                    "lastUpdatedOn": "2015-08-26",
+                    "status": "fixed",
+                    "priority": "high",
+                    "category": "general",
+                    "customer": {
+                      "id": "cus-103",
+                      "username": "apu.shah",
+                      "firstName": "Apu",
+                      "lastName": "Shah",
+                      "mobile": "6505067000",
+                      "home": "5105552121",
+                      "email": "apu.shah@yellowpages.com"
+                    }
+                  }
+                ]
+              }
+              
+      400:
+        description: |
+          A required query parameter 'technician' was not specified for this request.
+          
+  post:
+    description: |
+      Create a new incident
+      
+    protocols: [HTTPS]
+    body:
+      application/json:
+        schema: new-incident
+        example: |
+          {
+            "problem": "Incident New",
+            "description": "Your Honor, it's not easy being my parents.",
+            "priority": "high"
+          }
+          
+    responses:
+      201:
+        headers:
+          Location:
+            displayName: Location
+            description: |
+              The relative URL of the created item.
+              
+            type: string
+            example: |
+              /incidents/inc-345
+              
+            required: true
+        body:
+          application/json:
+            schema: incident
+            example: |
+              {
+                "id": "inc-201",
+                "problem": "Incident New",
+                "description": "Your Honor, it's not easy being my parents.",
+                "createdOn": "2015-08-18",
+                "lastUpdatedOn": "2015-08-22",
+                "picture": "data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCARXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAKgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/iB+hJQ0NfUFJPRklMRQABAQAAB9hhcHBsAiAAAG1udHJSR0IgWFlaIAfZAAIAGQALABoAC2Fjc3BBUFBMAAAAAGFwcGwAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2Rlc2MAAAEIAAAAb2RzY20AAAF4AAAFnGNwcnQAAAcUAAAAOHd0cHQAAAdMAAAAFHJYWVoAAAdgAAAAFGdYWVoAAAd0AAAAFGJYWVoAAAeIAAAAFHJUUkMAAAecAAAADmNoYWQAAAesAAAALGJUUkMAAAecAAAADmdUUkMAAAecAAAADmRlc2MAAAAAAAAAFEdlbmVyaWMgUkdCIFByb2ZpbGUAAAAAAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVjAAAAAAAAAB8AAAAMc2tTSwAAACgAAAGEZGFESwAAAC4AAAGsY2FFUwAAACQAAAHadmlWTgAAACQAAAH+cHRCUgAAACYAAAIidWtVQQAAACoAAAJIZnJGVQAAACgAAAJyaHVIVQAAACgAAAKaemhUVwAAABYAAALCbmJOTwAAACYAAALYY3NDWgAAACIAAAL+aGVJTAAAAB4AAAMgaXRJVAAAACgAAAM+cm9STwAAACQAAANmZGVERQAAACwAAAOKa29LUgAAABYAAAO2c3ZTRQAAACYAAALYemhDTgAAABYAAAPMamFKUAAAABoAAAPiZWxHUgAAACIAAAP8cHRQTwAAACYAAAQebmxOTAAAACgAAAREZXNFUwAAACYAAAQedGhUSAAAACQAAARsdHJUUgAAACIAAASQZmlGSQAAACgAAASyaHJIUgAAACgAAATacGxQTAAAACwAAAUCcnVSVQAAACIAAAUuYXJFRwAAACYAAAVQZW5VUwAAACYAAAV2AFYBYQBlAG8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbABHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGUAUABlAHIAZgBpAGwAIABSAEcAQgAgAGcAZQBuAOgAcgBpAGMAQx6lAHUAIABoAOwAbgBoACAAUgBHAEIAIABDAGgAdQBuAGcAUABlAHIAZgBpAGwAIABSAEcAQgAgAEcAZQBuAOkAcgBpAGMAbwQXBDAEMwQwBDsETAQ9BDgEOQAgBD8EQAQ+BEQEMAQ5BDsAIABSAEcAQgBQAHIAbwBmAGkAbAAgAGcA6QBuAOkAcgBpAHEAdQBlACAAUgBWAEIAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBskBp1KAAgAFIARwBCACCCcl9pY8+P8ABHAGUAbgBlAHIAaQBzAGsAIABSAEcAQgAtAHAAcgBvAGYAaQBsAE8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbAXkBegF1QXkBdkF3AAgAFIARwBCACAF2wXcBdwF2QBQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8AUAByAG8AZgBpAGwAIABSAEcAQgAgAGcAZQBuAGUAcgBpAGMAQQBsAGwAZwBlAG0AZQBpAG4AZQBzACAAUgBHAEIALQBQAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3xmbpAaACAAUgBHAEIAIGPPj/Blh072TgCCLAAgAFIARwBCACAw1zDtMNUwoTCkMOsDkwO1A70DuQO6A8wAIAPAA8EDvwPGA68DuwAgAFIARwBCAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDpAHIAaQBjAG8AQQBsAGcAZQBtAGUAZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAZQBsDkIOGw4jDkQOHw4lDkwAIABSAEcAQgAgDhcOMQ5IDicORA4bAEcAZQBuAGUAbAAgAFIARwBCACAAUAByAG8AZgBpAGwAaQBZAGwAZQBpAG4AZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAaQBsAGkARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZXRleHQAAAAAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC4AWFlaIAAAAAAAAPNSAAEAAAABFs9YWVogAAAAAAAAdE0AAD3uAAAD0FhZWiAAAAAAAABadQAArHMAABc0WFlaIAAAAAAAACgaAAAVnwAAuDZjdXJ2AAAAAAAAAAEBzQAAc2YzMgAAAAAAAQxCAAAF3v//8yYAAAeSAAD9kf//+6L///2jAAAD3AAAwGz/wAARCAAUABQDARIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9sAQwAICAgICAgNCAgNEg0NDRIZEhISEhkfGRkZGRkfJh8fHx8fHyYmJiYmJiYmLi4uLi4uNTU1NTU8PDw8PDw8PDw8/9sAQwEJCgoPDg8aDg4aPiojKj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+/90ABAAD/9oADAMBAAIRAxEAPwDd+ME15Y6dY39jd3Fs/nmIiGRkBVlLZOMZI28fjXeeJdEttZSya62lLO6SfY/R8Art+pzx70Ac58LWuZvDIvry5nuZZ5nyZnL7Qh2gLnkDjJ968Pv7fxtptreRJDf2ti8zSMhztG58jJX8M4oA+uaht8+RH/uj+VAH/9D2TXtJt9Ys0tbl5EVZopQY22nKMGHY8ZrUuP8AV/8AAl/nQBNgEYNLQAUUAf/Z",
+                "status": "open",
+                "priority": "high",
+                "category": "general",
+                "customer": {
+                  "id": "cus-101",
+                  "username": "julie.simpson",
+                  "firstName": "Julie",
+                  "lastName": "Simpson",
+                  "mobile": "6505067000",
+                  "home": "5105552121",
+                  "email": "julie.simpson@springtime.com"
+                },
+                "location": {
+                  "id": "loc-5",
+                  "formattedAddress": "4500 Broadway,\nOakland, CA 94611",
+                  "latitude": "37.832892",
+                  "longitude": "-122.253260"
+                }
+              }
+              
+  /{id}:
+    displayName: Incident
+    description: |
+      An incident retrieved using its 'id' that describes the nature of the problem.
+      
+    type:
+      item:
+        item-path-name: incident
+        example-item: |
+          {
+            "id": "inc-201",
+            "problem": "Incident New",
+            "description": "I learned that beneath my goody two shoes lie some very dark socks.",
+            "createdOn": "2015-08-18",
+            "lastUpdatedOn": "2015-08-20",
+            "picture": "data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCARXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAKgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/iB+hJQ0NfUFJPRklMRQABAQAAB9hhcHBsAiAAAG1udHJSR0IgWFlaIAfZAAIAGQALABoAC2Fjc3BBUFBMAAAAAGFwcGwAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2Rlc2MAAAEIAAAAb2RzY20AAAF4AAAFnGNwcnQAAAcUAAAAOHd0cHQAAAdMAAAAFHJYWVoAAAdgAAAAFGdYWVoAAAd0AAAAFGJYWVoAAAeIAAAAFHJUUkMAAAecAAAADmNoYWQAAAesAAAALGJUUkMAAAecAAAADmdUUkMAAAecAAAADmRlc2MAAAAAAAAAFEdlbmVyaWMgUkdCIFByb2ZpbGUAAAAAAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVjAAAAAAAAAB8AAAAMc2tTSwAAACgAAAGEZGFESwAAAC4AAAGsY2FFUwAAACQAAAHadmlWTgAAACQAAAH+cHRCUgAAACYAAAIidWtVQQAAACoAAAJIZnJGVQAAACgAAAJyaHVIVQAAACgAAAKaemhUVwAAABYAAALCbmJOTwAAACYAAALYY3NDWgAAACIAAAL+aGVJTAAAAB4AAAMgaXRJVAAAACgAAAM+cm9STwAAACQAAANmZGVERQAAACwAAAOKa29LUgAAABYAAAO2c3ZTRQAAACYAAALYemhDTgAAABYAAAPMamFKUAAAABoAAAPiZWxHUgAAACIAAAP8cHRQTwAAACYAAAQebmxOTAAAACgAAAREZXNFUwAAACYAAAQedGhUSAAAACQAAARsdHJUUgAAACIAAASQZmlGSQAAACgAAASyaHJIUgAAACgAAATacGxQTAAAACwAAAUCcnVSVQAAACIAAAUuYXJFRwAAACYAAAVQZW5VUwAAACYAAAV2AFYBYQBlAG8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbABHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGUAUABlAHIAZgBpAGwAIABSAEcAQgAgAGcAZQBuAOgAcgBpAGMAQx6lAHUAIABoAOwAbgBoACAAUgBHAEIAIABDAGgAdQBuAGcAUABlAHIAZgBpAGwAIABSAEcAQgAgAEcAZQBuAOkAcgBpAGMAbwQXBDAEMwQwBDsETAQ9BDgEOQAgBD8EQAQ+BEQEMAQ5BDsAIABSAEcAQgBQAHIAbwBmAGkAbAAgAGcA6QBuAOkAcgBpAHEAdQBlACAAUgBWAEIAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBskBp1KAAgAFIARwBCACCCcl9pY8+P8ABHAGUAbgBlAHIAaQBzAGsAIABSAEcAQgAtAHAAcgBvAGYAaQBsAE8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbAXkBegF1QXkBdkF3AAgAFIARwBCACAF2wXcBdwF2QBQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8AUAByAG8AZgBpAGwAIABSAEcAQgAgAGcAZQBuAGUAcgBpAGMAQQBsAGwAZwBlAG0AZQBpAG4AZQBzACAAUgBHAEIALQBQAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3xmbpAaACAAUgBHAEIAIGPPj/Blh072TgCCLAAgAFIARwBCACAw1zDtMNUwoTCkMOsDkwO1A70DuQO6A8wAIAPAA8EDvwPGA68DuwAgAFIARwBCAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDpAHIAaQBjAG8AQQBsAGcAZQBtAGUAZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAZQBsDkIOGw4jDkQOHw4lDkwAIABSAEcAQgAgDhcOMQ5IDicORA4bAEcAZQBuAGUAbAAgAFIARwBCACAAUAByAG8AZgBpAGwAaQBZAGwAZQBpAG4AZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAaQBsAGkARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZXRleHQAAAAAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC4AWFlaIAAAAAAAAPNSAAEAAAABFs9YWVogAAAAAAAAdE0AAD3uAAAD0FhZWiAAAAAAAABadQAArHMAABc0WFlaIAAAAAAAACgaAAAVnwAAuDZjdXJ2AAAAAAAAAAEBzQAAc2YzMgAAAAAAAQxCAAAF3v//8yYAAAeSAAD9kf//+6L///2jAAAD3AAAwGz/wAARCAAUABQDARIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9sAQwAICAgICAgNCAgNEg0NDRIZEhISEhkfGRkZGRkfJh8fHx8fHyYmJiYmJiYmLi4uLi4uNTU1NTU8PDw8PDw8PDw8/9sAQwEJCgoPDg8aDg4aPiojKj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+/90ABAAD/9oADAMBAAIRAxEAPwDd+ME15Y6dY39jd3Fs/nmIiGRkBVlLZOMZI28fjXeeJdEttZSya62lLO6SfY/R8Art+pzx70Ac58LWuZvDIvry5nuZZ5nyZnL7Qh2gLnkDjJ968Pv7fxtptreRJDf2ti8zSMhztG58jJX8M4oA+uaht8+RH/uj+VAH/9D2TXtJt9Ys0tbl5EVZopQY22nKMGHY8ZrUuP8AV/8AAl/nQBNgEYNLQAUUAf/Z",
+            "status": "open",
+            "priority": "high",
+            "category": "general",
+            "customer": {
+              "id": "cus-101",
+              "username": "julie.simpson",
+              "firstName": "Julie",
+              "lastName": "Simpson",
+              "mobile": "6505067000",
+              "home": "5105552121",
+              "email": "julie.simpson@springtime.com"
+            },
+            "location": {
+              "id": "loc-5",
+              "formattedAddress": "4500 Broadway,\nOakland, CA 94611",
+              "latitude": "37.832892",
+              "longitude": "-122.253260"
+            }
+          }
+          
+        example-patchitem: |
+          {
+            "description": "Updated! Heater unusable!",
+            "priority": "high"
+          }
+          
+    uriParameters:
+      id:
+        displayName: Incident ID
+        type: string
+        required: true
+    get:
+      description: |
+        Get a single incident.
+        
+      responses:
+        200:
+          body:
+            application/json:
+              schema: incident
+              example: |
+                {
+                  "id": "inc-201",
+                  "problem": "Incident New",
+                  "description": "I learned that beneath my goody two shoes lie some very dark socks.",
+                  "createdOn": "2015-08-18",
+                  "lastUpdatedOn": "2015-08-20",
+                  "picture": "data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCARXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAKgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/iB+hJQ0NfUFJPRklMRQABAQAAB9hhcHBsAiAAAG1udHJSR0IgWFlaIAfZAAIAGQALABoAC2Fjc3BBUFBMAAAAAGFwcGwAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2Rlc2MAAAEIAAAAb2RzY20AAAF4AAAFnGNwcnQAAAcUAAAAOHd0cHQAAAdMAAAAFHJYWVoAAAdgAAAAFGdYWVoAAAd0AAAAFGJYWVoAAAeIAAAAFHJUUkMAAAecAAAADmNoYWQAAAesAAAALGJUUkMAAAecAAAADmdUUkMAAAecAAAADmRlc2MAAAAAAAAAFEdlbmVyaWMgUkdCIFByb2ZpbGUAAAAAAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVjAAAAAAAAAB8AAAAMc2tTSwAAACgAAAGEZGFESwAAAC4AAAGsY2FFUwAAACQAAAHadmlWTgAAACQAAAH+cHRCUgAAACYAAAIidWtVQQAAACoAAAJIZnJGVQAAACgAAAJyaHVIVQAAACgAAAKaemhUVwAAABYAAALCbmJOTwAAACYAAALYY3NDWgAAACIAAAL+aGVJTAAAAB4AAAMgaXRJVAAAACgAAAM+cm9STwAAACQAAANmZGVERQAAACwAAAOKa29LUgAAABYAAAO2c3ZTRQAAACYAAALYemhDTgAAABYAAAPMamFKUAAAABoAAAPiZWxHUgAAACIAAAP8cHRQTwAAACYAAAQebmxOTAAAACgAAAREZXNFUwAAACYAAAQedGhUSAAAACQAAARsdHJUUgAAACIAAASQZmlGSQAAACgAAASyaHJIUgAAACgAAATacGxQTAAAACwAAAUCcnVSVQAAACIAAAUuYXJFRwAAACYAAAVQZW5VUwAAACYAAAV2AFYBYQBlAG8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbABHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGUAUABlAHIAZgBpAGwAIABSAEcAQgAgAGcAZQBuAOgAcgBpAGMAQx6lAHUAIABoAOwAbgBoACAAUgBHAEIAIABDAGgAdQBuAGcAUABlAHIAZgBpAGwAIABSAEcAQgAgAEcAZQBuAOkAcgBpAGMAbwQXBDAEMwQwBDsETAQ9BDgEOQAgBD8EQAQ+BEQEMAQ5BDsAIABSAEcAQgBQAHIAbwBmAGkAbAAgAGcA6QBuAOkAcgBpAHEAdQBlACAAUgBWAEIAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBskBp1KAAgAFIARwBCACCCcl9pY8+P8ABHAGUAbgBlAHIAaQBzAGsAIABSAEcAQgAtAHAAcgBvAGYAaQBsAE8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbAXkBegF1QXkBdkF3AAgAFIARwBCACAF2wXcBdwF2QBQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8AUAByAG8AZgBpAGwAIABSAEcAQgAgAGcAZQBuAGUAcgBpAGMAQQBsAGwAZwBlAG0AZQBpAG4AZQBzACAAUgBHAEIALQBQAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3xmbpAaACAAUgBHAEIAIGPPj/Blh072TgCCLAAgAFIARwBCACAw1zDtMNUwoTCkMOsDkwO1A70DuQO6A8wAIAPAA8EDvwPGA68DuwAgAFIARwBCAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDpAHIAaQBjAG8AQQBsAGcAZQBtAGUAZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAZQBsDkIOGw4jDkQOHw4lDkwAIABSAEcAQgAgDhcOMQ5IDicORA4bAEcAZQBuAGUAbAAgAFIARwBCACAAUAByAG8AZgBpAGwAaQBZAGwAZQBpAG4AZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAaQBsAGkARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZXRleHQAAAAAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC4AWFlaIAAAAAAAAPNSAAEAAAABFs9YWVogAAAAAAAAdE0AAD3uAAAD0FhZWiAAAAAAAABadQAArHMAABc0WFlaIAAAAAAAACgaAAAVnwAAuDZjdXJ2AAAAAAAAAAEBzQAAc2YzMgAAAAAAAQxCAAAF3v//8yYAAAeSAAD9kf//+6L///2jAAAD3AAAwGz/wAARCAAUABQDARIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9sAQwAICAgICAgNCAgNEg0NDRIZEhISEhkfGRkZGRkfJh8fHx8fHyYmJiYmJiYmLi4uLi4uNTU1NTU8PDw8PDw8PDw8/9sAQwEJCgoPDg8aDg4aPiojKj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+/90ABAAD/9oADAMBAAIRAxEAPwDd+ME15Y6dY39jd3Fs/nmIiGRkBVlLZOMZI28fjXeeJdEttZSya62lLO6SfY/R8Art+pzx70Ac58LWuZvDIvry5nuZZ5nyZnL7Qh2gLnkDjJ968Pv7fxtptreRJDf2ti8zSMhztG58jJX8M4oA+uaht8+RH/uj+VAH/9D2TXtJt9Ys0tbl5EVZopQY22nKMGHY8ZrUuP8AV/8AAl/nQBNgEYNLQAUUAf/Z",
+                  "status": "open",
+                  "priority": "high",
+                  "category": "general",
+                  "customer": {
+                    "id": "cus-101",
+                    "username": "julie.simpson",
+                    "firstName": "Julie",
+                    "lastName": "Simpson",
+                    "mobile": "6505067000",
+                    "home": "5105552121",
+                    "email": "julie.simpson@springtime.com"
+                  },
+                  "location": {
+                    "id": "loc-5",
+                    "formattedAddress": "4500 Broadway,\nOakland, CA 94611",
+                    "latitude": "37.832892",
+                    "longitude": "-122.253260"
+                  }
+                }
+                
+        404:
+          body:
+            application/json:
+              example: |
+                {"message": "incident not found" }
+                
+    put:
+      description: |
+        Update a specific incident.
+        
+      body:
+        application/json:
+          schema: patch-incident
+          example: |
+            {
+              "description": "Updated! Heater unusable!",
+              "priority": "high"
+            }
+            
+      responses:
+        200:
+          body:
+            application/json:
+              schema: incident
+              example: |
+                {
+                  "id": "inc-201",
+                  "problem": "Incident New",
+                  "description": "I learned that beneath my goody two shoes lie some very dark socks.",
+                  "createdOn": "2015-08-18",
+                  "lastUpdatedOn": "2015-08-20",
+                  "picture": "data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCARXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAKgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/iB+hJQ0NfUFJPRklMRQABAQAAB9hhcHBsAiAAAG1udHJSR0IgWFlaIAfZAAIAGQALABoAC2Fjc3BBUFBMAAAAAGFwcGwAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2Rlc2MAAAEIAAAAb2RzY20AAAF4AAAFnGNwcnQAAAcUAAAAOHd0cHQAAAdMAAAAFHJYWVoAAAdgAAAAFGdYWVoAAAd0AAAAFGJYWVoAAAeIAAAAFHJUUkMAAAecAAAADmNoYWQAAAesAAAALGJUUkMAAAecAAAADmdUUkMAAAecAAAADmRlc2MAAAAAAAAAFEdlbmVyaWMgUkdCIFByb2ZpbGUAAAAAAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVjAAAAAAAAAB8AAAAMc2tTSwAAACgAAAGEZGFESwAAAC4AAAGsY2FFUwAAACQAAAHadmlWTgAAACQAAAH+cHRCUgAAACYAAAIidWtVQQAAACoAAAJIZnJGVQAAACgAAAJyaHVIVQAAACgAAAKaemhUVwAAABYAAALCbmJOTwAAACYAAALYY3NDWgAAACIAAAL+aGVJTAAAAB4AAAMgaXRJVAAAACgAAAM+cm9STwAAACQAAANmZGVERQAAACwAAAOKa29LUgAAABYAAAO2c3ZTRQAAACYAAALYemhDTgAAABYAAAPMamFKUAAAABoAAAPiZWxHUgAAACIAAAP8cHRQTwAAACYAAAQebmxOTAAAACgAAAREZXNFUwAAACYAAAQedGhUSAAAACQAAARsdHJUUgAAACIAAASQZmlGSQAAACgAAASyaHJIUgAAACgAAATacGxQTAAAACwAAAUCcnVSVQAAACIAAAUuYXJFRwAAACYAAAVQZW5VUwAAACYAAAV2AFYBYQBlAG8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbABHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGUAUABlAHIAZgBpAGwAIABSAEcAQgAgAGcAZQBuAOgAcgBpAGMAQx6lAHUAIABoAOwAbgBoACAAUgBHAEIAIABDAGgAdQBuAGcAUABlAHIAZgBpAGwAIABSAEcAQgAgAEcAZQBuAOkAcgBpAGMAbwQXBDAEMwQwBDsETAQ9BDgEOQAgBD8EQAQ+BEQEMAQ5BDsAIABSAEcAQgBQAHIAbwBmAGkAbAAgAGcA6QBuAOkAcgBpAHEAdQBlACAAUgBWAEIAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBskBp1KAAgAFIARwBCACCCcl9pY8+P8ABHAGUAbgBlAHIAaQBzAGsAIABSAEcAQgAtAHAAcgBvAGYAaQBsAE8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbAXkBegF1QXkBdkF3AAgAFIARwBCACAF2wXcBdwF2QBQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8AUAByAG8AZgBpAGwAIABSAEcAQgAgAGcAZQBuAGUAcgBpAGMAQQBsAGwAZwBlAG0AZQBpAG4AZQBzACAAUgBHAEIALQBQAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3xmbpAaACAAUgBHAEIAIGPPj/Blh072TgCCLAAgAFIARwBCACAw1zDtMNUwoTCkMOsDkwO1A70DuQO6A8wAIAPAA8EDvwPGA68DuwAgAFIARwBCAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDpAHIAaQBjAG8AQQBsAGcAZQBtAGUAZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAZQBsDkIOGw4jDkQOHw4lDkwAIABSAEcAQgAgDhcOMQ5IDicORA4bAEcAZQBuAGUAbAAgAFIARwBCACAAUAByAG8AZgBpAGwAaQBZAGwAZQBpAG4AZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAaQBsAGkARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZXRleHQAAAAAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC4AWFlaIAAAAAAAAPNSAAEAAAABFs9YWVogAAAAAAAAdE0AAD3uAAAD0FhZWiAAAAAAAABadQAArHMAABc0WFlaIAAAAAAAACgaAAAVnwAAuDZjdXJ2AAAAAAAAAAEBzQAAc2YzMgAAAAAAAQxCAAAF3v//8yYAAAeSAAD9kf//+6L///2jAAAD3AAAwGz/wAARCAAUABQDARIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9sAQwAICAgICAgNCAgNEg0NDRIZEhISEhkfGRkZGRkfJh8fHx8fHyYmJiYmJiYmLi4uLi4uNTU1NTU8PDw8PDw8PDw8/9sAQwEJCgoPDg8aDg4aPiojKj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+/90ABAAD/9oADAMBAAIRAxEAPwDd+ME15Y6dY39jd3Fs/nmIiGRkBVlLZOMZI28fjXeeJdEttZSya62lLO6SfY/R8Art+pzx70Ac58LWuZvDIvry5nuZZ5nyZnL7Qh2gLnkDjJ968Pv7fxtptreRJDf2ti8zSMhztG58jJX8M4oA+uaht8+RH/uj+VAH/9D2TXtJt9Ys0tbl5EVZopQY22nKMGHY8ZrUuP8AV/8AAl/nQBNgEYNLQAUUAf/Z",
+                  "status": "open",
+                  "priority": "high",
+                  "category": "general",
+                  "customer": {
+                    "id": "cus-101",
+                    "username": "julie.simpson",
+                    "firstName": "Julie",
+                    "lastName": "Simpson",
+                    "mobile": "6505067000",
+                    "home": "5105552121",
+                    "email": "julie.simpson@springtime.com"
+                  },
+                  "location": {
+                    "id": "loc-5",
+                    "formattedAddress": "4500 Broadway,\nOakland, CA 94611",
+                    "latitude": "37.832892",
+                    "longitude": "-122.253260"
+                  }
+                }
+                
+        404:
+          body:
+            application/json:
+              example: |
+                {"message": "Unable to find incident record."}
+                
+    delete:
+      description: |
+        Remove/close the specific incident.
+        
+      responses:
+        204:
+          description: |
+            The specific incident item was deleted successfully.
+            
+    /closeIncident:
+      displayName: Close Incident
+      description: |
+        Closes the Incident.
+        
+      post:
+        description: |
+          Closes the incident.
+          
+        body:
+          application/json:
+        responses:
+          204:
+            description: |
+              The incident has been closed successfully.
+              
+    /activities:
+      displayName: Incident Activities
+      description: |
+        List of incident-activities.
+        
+      type:
+        collectionWithFormPost:
+          path-name: incident-activities
+          item-path-name: incident-activity
+          example-collection: |
+            [
+                {
+                    "id": "act-101",
+                    "firstName": "Ricky",
+                    "lastName": "Barker",
+                    "userId": "cus-101",
+                    "role": "Customer",
+                    "createdOn": "2015-07-18T09:00:41+00:00",
+                    "comment": "Fridge is utterly broken!",
+                    "picture": "data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCARXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAKgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/iB+hJQ0NfUFJPRklMRQABAQAAB9hhcHBsAiAAAG1udHJSR0IgWFlaIAfZAAIAGQALABoAC2Fjc3BBUFBMAAAAAGFwcGwAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2Rlc2MAAAEIAAAAb2RzY20AAAF4AAAFnGNwcnQAAAcUAAAAOHd0cHQAAAdMAAAAFHJYWVoAAAdgAAAAFGdYWVoAAAd0AAAAFGJYWVoAAAeIAAAAFHJUUkMAAAecAAAADmNoYWQAAAesAAAALGJUUkMAAAecAAAADmdUUkMAAAecAAAADmRlc2MAAAAAAAAAFEdlbmVyaWMgUkdCIFByb2ZpbGUAAAAAAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVjAAAAAAAAAB8AAAAMc2tTSwAAACgAAAGEZGFESwAAAC4AAAGsY2FFUwAAACQAAAHadmlWTgAAACQAAAH+cHRCUgAAACYAAAIidWtVQQAAACoAAAJIZnJGVQAAACgAAAJyaHVIVQAAACgAAAKaemhUVwAAABYAAALCbmJOTwAAACYAAALYY3NDWgAAACIAAAL+aGVJTAAAAB4AAAMgaXRJVAAAACgAAAM+cm9STwAAACQAAANmZGVERQAAACwAAAOKa29LUgAAABYAAAO2c3ZTRQAAACYAAALYemhDTgAAABYAAAPMamFKUAAAABoAAAPiZWxHUgAAACIAAAP8cHRQTwAAACYAAAQebmxOTAAAACgAAAREZXNFUwAAACYAAAQedGhUSAAAACQAAARsdHJUUgAAACIAAASQZmlGSQAAACgAAASyaHJIUgAAACgAAATacGxQTAAAACwAAAUCcnVSVQAAACIAAAUuYXJFRwAAACYAAAVQZW5VUwAAACYAAAV2AFYBYQBlAG8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbABHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGUAUABlAHIAZgBpAGwAIABSAEcAQgAgAGcAZQBuAOgAcgBpAGMAQx6lAHUAIABoAOwAbgBoACAAUgBHAEIAIABDAGgAdQBuAGcAUABlAHIAZgBpAGwAIABSAEcAQgAgAEcAZQBuAOkAcgBpAGMAbwQXBDAEMwQwBDsETAQ9BDgEOQAgBD8EQAQ+BEQEMAQ5BDsAIABSAEcAQgBQAHIAbwBmAGkAbAAgAGcA6QBuAOkAcgBpAHEAdQBlACAAUgBWAEIAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBskBp1KAAgAFIARwBCACCCcl9pY8+P8ABHAGUAbgBlAHIAaQBzAGsAIABSAEcAQgAtAHAAcgBvAGYAaQBsAE8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbAXkBegF1QXkBdkF3AAgAFIARwBCACAF2wXcBdwF2QBQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8AUAByAG8AZgBpAGwAIABSAEcAQgAgAGcAZQBuAGUAcgBpAGMAQQBsAGwAZwBlAG0AZQBpAG4AZQBzACAAUgBHAEIALQBQAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3xmbpAaACAAUgBHAEIAIGPPj/Blh072TgCCLAAgAFIARwBCACAw1zDtMNUwoTCkMOsDkwO1A70DuQO6A8wAIAPAA8EDvwPGA68DuwAgAFIARwBCAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDpAHIAaQBjAG8AQQBsAGcAZQBtAGUAZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAZQBsDkIOGw4jDkQOHw4lDkwAIABSAEcAQgAgDhcOMQ5IDicORA4bAEcAZQBuAGUAbAAgAFIARwBCACAAUAByAG8AZgBpAGwAaQBZAGwAZQBpAG4AZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAaQBsAGkARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZXRleHQAAAAAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC4AWFlaIAAAAAAAAPNSAAEAAAABFs9YWVogAAAAAAAAdE0AAD3uAAAD0FhZWiAAAAAAAABadQAArHMAABc0WFlaIAAAAAAAACgaAAAVnwAAuDZjdXJ2AAAAAAAAAAEBzQAAc2YzMgAAAAAAAQxCAAAF3v//8yYAAAeSAAD9kf//+6L///2jAAAD3AAAwGz/wAARCAAUABQDARIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9sAQwAICAgICAgNCAgNEg0NDRIZEhISEhkfGRkZGRkfJh8fHx8fHyYmJiYmJiYmLi4uLi4uNTU1NTU8PDw8PDw8PDw8/9sAQwEJCgoPDg8aDg4aPiojKj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+/90ABAAD/9oADAMBAAIRAxEAPwDd+ME15Y6dY39jd3Fs/nmIiGRkBVlLZOMZI28fjXeeJdEttZSya62lLO6SfY/R8Art+pzx70Ac58LWuZvDIvry5nuZZ5nyZnL7Qh2gLnkDjJ968Pv7fxtptreRJDf2ti8zSMhztG58jJX8M4oA+uaht8+RH/uj+VAH/9D2TXtJt9Ys0tbl5EVZopQY22nKMGHY8ZrUuP8AV/8AAl/nQBNgEYNLQAUUAf/Z"
+                },
+                {
+                    "id": "act-102",
+                    "firstName": "Bob",
+                    "lastName": "Pronto",
+                    "userId": "tec-101",
+                    "role": "Field Service",
+                    "createdOn": "2015-07-19T13:00:00+00:00",
+                    "comment": "Status Changed to Accepted. Technician will respond within 48 hours.",
+                    "picture": "data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCARXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAKgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/iB+hJQ0NfUFJPRklMRQABAQAAB9hhcHBsAiAAAG1udHJSR0IgWFlaIAfZAAIAGQALABoAC2Fjc3BBUFBMAAAAAGFwcGwAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2Rlc2MAAAEIAAAAb2RzY20AAAF4AAAFnGNwcnQAAAcUAAAAOHd0cHQAAAdMAAAAFHJYWVoAAAdgAAAAFGdYWVoAAAd0AAAAFGJYWVoAAAeIAAAAFHJUUkMAAAecAAAADmNoYWQAAAesAAAALGJUUkMAAAecAAAADmdUUkMAAAecAAAADmRlc2MAAAAAAAAAFEdlbmVyaWMgUkdCIFByb2ZpbGUAAAAAAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVjAAAAAAAAAB8AAAAMc2tTSwAAACgAAAGEZGFESwAAAC4AAAGsY2FFUwAAACQAAAHadmlWTgAAACQAAAH+cHRCUgAAACYAAAIidWtVQQAAACoAAAJIZnJGVQAAACgAAAJyaHVIVQAAACgAAAKaemhUVwAAABYAAALCbmJOTwAAACYAAALYY3NDWgAAACIAAAL+aGVJTAAAAB4AAAMgaXRJVAAAACgAAAM+cm9STwAAACQAAANmZGVERQAAACwAAAOKa29LUgAAABYAAAO2c3ZTRQAAACYAAALYemhDTgAAABYAAAPMamFKUAAAABoAAAPiZWxHUgAAACIAAAP8cHRQTwAAACYAAAQebmxOTAAAACgAAAREZXNFUwAAACYAAAQedGhUSAAAACQAAARsdHJUUgAAACIAAASQZmlGSQAAACgAAASyaHJIUgAAACgAAATacGxQTAAAACwAAAUCcnVSVQAAACIAAAUuYXJFRwAAACYAAAVQZW5VUwAAACYAAAV2AFYBYQBlAG8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbABHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGUAUABlAHIAZgBpAGwAIABSAEcAQgAgAGcAZQBuAOgAcgBpAGMAQx6lAHUAIABoAOwAbgBoACAAUgBHAEIAIABDAGgAdQBuAGcAUABlAHIAZgBpAGwAIABSAEcAQgAgAEcAZQBuAOkAcgBpAGMAbwQXBDAEMwQwBDsETAQ9BDgEOQAgBD8EQAQ+BEQEMAQ5BDsAIABSAEcAQgBQAHIAbwBmAGkAbAAgAGcA6QBuAOkAcgBpAHEAdQBlACAAUgBWAEIAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBskBp1KAAgAFIARwBCACCCcl9pY8+P8ABHAGUAbgBlAHIAaQBzAGsAIABSAEcAQgAtAHAAcgBvAGYAaQBsAE8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbAXkBegF1QXkBdkF3AAgAFIARwBCACAF2wXcBdwF2QBQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8AUAByAG8AZgBpAGwAIABSAEcAQgAgAGcAZQBuAGUAcgBpAGMAQQBsAGwAZwBlAG0AZQBpAG4AZQBzACAAUgBHAEIALQBQAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3xmbpAaACAAUgBHAEIAIGPPj/Blh072TgCCLAAgAFIARwBCACAw1zDtMNUwoTCkMOsDkwO1A70DuQO6A8wAIAPAA8EDvwPGA68DuwAgAFIARwBCAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDpAHIAaQBjAG8AQQBsAGcAZQBtAGUAZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAZQBsDkIOGw4jDkQOHw4lDkwAIABSAEcAQgAgDhcOMQ5IDicORA4bAEcAZQBuAGUAbAAgAFIARwBCACAAUAByAG8AZgBpAGwAaQBZAGwAZQBpAG4AZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAaQBsAGkARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZXRleHQAAAAAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC4AWFlaIAAAAAAAAPNSAAEAAAABFs9YWVogAAAAAAAAdE0AAD3uAAAD0FhZWiAAAAAAAABadQAArHMAABc0WFlaIAAAAAAAACgaAAAVnwAAuDZjdXJ2AAAAAAAAAAEBzQAAc2YzMgAAAAAAAQxCAAAF3v//8yYAAAeSAAD9kf//+6L///2jAAAD3AAAwGz/wAARCAAUABQDARIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9sAQwAICAgICAgNCAgNEg0NDRIZEhISEhkfGRkZGRkfJh8fHx8fHyYmJiYmJiYmLi4uLi4uNTU1NTU8PDw8PDw8PDw8/9sAQwEJCgoPDg8aDg4aPiojKj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+/90ABAAD/9oADAMBAAIRAxEAPwDd+ME15Y6dY39jd3Fs/nmIiGRkBVlLZOMZI28fjXeeJdEttZSya62lLO6SfY/R8Art+pzx70Ac58LWuZvDIvry5nuZZ5nyZnL7Qh2gLnkDjJ968Pv7fxtptreRJDf2ti8zSMhztG58jJX8M4oA+uaht8+RH/uj+VAH/9D2TXtJt9Ys0tbl5EVZopQY22nKMGHY8ZrUuP8AV/8AAl/nQBNgEYNLQAUUAf/Z"
+                },
+                {
+                    "id": "act-103",
+                    "firstName": "Bob",
+                    "lastName": "Pronto",
+                    "userId": "tec-101",
+                    "role": "Field Service",
+                    "createdOn": "2015-07-19T09:15:00+00:00",
+                    "comment": "Enroute to customer location",
+                    "picture": "data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCARXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAKgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/iB+hJQ0NfUFJPRklMRQABAQAAB9hhcHBsAiAAAG1udHJSR0IgWFlaIAfZAAIAGQALABoAC2Fjc3BBUFBMAAAAAGFwcGwAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2Rlc2MAAAEIAAAAb2RzY20AAAF4AAAFnGNwcnQAAAcUAAAAOHd0cHQAAAdMAAAAFHJYWVoAAAdgAAAAFGdYWVoAAAd0AAAAFGJYWVoAAAeIAAAAFHJUUkMAAAecAAAADmNoYWQAAAesAAAALGJUUkMAAAecAAAADmdUUkMAAAecAAAADmRlc2MAAAAAAAAAFEdlbmVyaWMgUkdCIFByb2ZpbGUAAAAAAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVjAAAAAAAAAB8AAAAMc2tTSwAAACgAAAGEZGFESwAAAC4AAAGsY2FFUwAAACQAAAHadmlWTgAAACQAAAH+cHRCUgAAACYAAAIidWtVQQAAACoAAAJIZnJGVQAAACgAAAJyaHVIVQAAACgAAAKaemhUVwAAABYAAALCbmJOTwAAACYAAALYY3NDWgAAACIAAAL+aGVJTAAAAB4AAAMgaXRJVAAAACgAAAM+cm9STwAAACQAAANmZGVERQAAACwAAAOKa29LUgAAABYAAAO2c3ZTRQAAACYAAALYemhDTgAAABYAAAPMamFKUAAAABoAAAPiZWxHUgAAACIAAAP8cHRQTwAAACYAAAQebmxOTAAAACgAAAREZXNFUwAAACYAAAQedGhUSAAAACQAAARsdHJUUgAAACIAAASQZmlGSQAAACgAAASyaHJIUgAAACgAAATacGxQTAAAACwAAAUCcnVSVQAAACIAAAUuYXJFRwAAACYAAAVQZW5VUwAAACYAAAV2AFYBYQBlAG8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbABHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGUAUABlAHIAZgBpAGwAIABSAEcAQgAgAGcAZQBuAOgAcgBpAGMAQx6lAHUAIABoAOwAbgBoACAAUgBHAEIAIABDAGgAdQBuAGcAUABlAHIAZgBpAGwAIABSAEcAQgAgAEcAZQBuAOkAcgBpAGMAbwQXBDAEMwQwBDsETAQ9BDgEOQAgBD8EQAQ+BEQEMAQ5BDsAIABSAEcAQgBQAHIAbwBmAGkAbAAgAGcA6QBuAOkAcgBpAHEAdQBlACAAUgBWAEIAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBskBp1KAAgAFIARwBCACCCcl9pY8+P8ABHAGUAbgBlAHIAaQBzAGsAIABSAEcAQgAtAHAAcgBvAGYAaQBsAE8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbAXkBegF1QXkBdkF3AAgAFIARwBCACAF2wXcBdwF2QBQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8AUAByAG8AZgBpAGwAIABSAEcAQgAgAGcAZQBuAGUAcgBpAGMAQQBsAGwAZwBlAG0AZQBpAG4AZQBzACAAUgBHAEIALQBQAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3xmbpAaACAAUgBHAEIAIGPPj/Blh072TgCCLAAgAFIARwBCACAw1zDtMNUwoTCkMOsDkwO1A70DuQO6A8wAIAPAA8EDvwPGA68DuwAgAFIARwBCAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDpAHIAaQBjAG8AQQBsAGcAZQBtAGUAZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAZQBsDkIOGw4jDkQOHw4lDkwAIABSAEcAQgAgDhcOMQ5IDicORA4bAEcAZQBuAGUAbAAgAFIARwBCACAAUAByAG8AZgBpAGwAaQBZAGwAZQBpAG4AZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAaQBsAGkARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZXRleHQAAAAAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC4AWFlaIAAAAAAAAPNSAAEAAAABFs9YWVogAAAAAAAAdE0AAD3uAAAD0FhZWiAAAAAAAABadQAArHMAABc0WFlaIAAAAAAAACgaAAAVnwAAuDZjdXJ2AAAAAAAAAAEBzQAAc2YzMgAAAAAAAQxCAAAF3v//8yYAAAeSAAD9kf//+6L///2jAAAD3AAAwGz/wAARCAAUABQDARIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9sAQwAICAgICAgNCAgNEg0NDRIZEhISEhkfGRkZGRkfJh8fHx8fHyYmJiYmJiYmLi4uLi4uNTU1NTU8PDw8PDw8PDw8/9sAQwEJCgoPDg8aDg4aPiojKj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+/90ABAAD/9oADAMBAAIRAxEAPwDd+ME15Y6dY39jd3Fs/nmIiGRkBVlLZOMZI28fjXeeJdEttZSya62lLO6SfY/R8Art+pzx70Ac58LWuZvDIvry5nuZZ5nyZnL7Qh2gLnkDjJ968Pv7fxtptreRJDf2ti8zSMhztG58jJX8M4oA+uaht8+RH/uj+VAH/9D2TXtJt9Ys0tbl5EVZopQY22nKMGHY8ZrUuP8AV/8AAl/nQBNgEYNLQAUUAf/Z"
+                }
+            ]
+            
+          example-item: |
+            ""
+            
+      get:
+        description: |
+          Get a list of incident-activities.
+          
+        responses:
+          200:
+            body:
+              application/json:
+                schema: incident-activities
+                example: |
+                  [
+                      {
+                          "id": "act-101",
+                          "firstName": "Ricky",
+                          "lastName": "Barker",
+                          "userId": "cus-101",
+                          "role": "Customer",
+                          "createdOn": "2015-07-18T09:00:41+00:00",
+                          "comment": "Fridge is utterly broken!",
+                          "picture": "data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCARXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAKgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/iB+hJQ0NfUFJPRklMRQABAQAAB9hhcHBsAiAAAG1udHJSR0IgWFlaIAfZAAIAGQALABoAC2Fjc3BBUFBMAAAAAGFwcGwAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2Rlc2MAAAEIAAAAb2RzY20AAAF4AAAFnGNwcnQAAAcUAAAAOHd0cHQAAAdMAAAAFHJYWVoAAAdgAAAAFGdYWVoAAAd0AAAAFGJYWVoAAAeIAAAAFHJUUkMAAAecAAAADmNoYWQAAAesAAAALGJUUkMAAAecAAAADmdUUkMAAAecAAAADmRlc2MAAAAAAAAAFEdlbmVyaWMgUkdCIFByb2ZpbGUAAAAAAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVjAAAAAAAAAB8AAAAMc2tTSwAAACgAAAGEZGFESwAAAC4AAAGsY2FFUwAAACQAAAHadmlWTgAAACQAAAH+cHRCUgAAACYAAAIidWtVQQAAACoAAAJIZnJGVQAAACgAAAJyaHVIVQAAACgAAAKaemhUVwAAABYAAALCbmJOTwAAACYAAALYY3NDWgAAACIAAAL+aGVJTAAAAB4AAAMgaXRJVAAAACgAAAM+cm9STwAAACQAAANmZGVERQAAACwAAAOKa29LUgAAABYAAAO2c3ZTRQAAACYAAALYemhDTgAAABYAAAPMamFKUAAAABoAAAPiZWxHUgAAACIAAAP8cHRQTwAAACYAAAQebmxOTAAAACgAAAREZXNFUwAAACYAAAQedGhUSAAAACQAAARsdHJUUgAAACIAAASQZmlGSQAAACgAAASyaHJIUgAAACgAAATacGxQTAAAACwAAAUCcnVSVQAAACIAAAUuYXJFRwAAACYAAAVQZW5VUwAAACYAAAV2AFYBYQBlAG8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbABHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGUAUABlAHIAZgBpAGwAIABSAEcAQgAgAGcAZQBuAOgAcgBpAGMAQx6lAHUAIABoAOwAbgBoACAAUgBHAEIAIABDAGgAdQBuAGcAUABlAHIAZgBpAGwAIABSAEcAQgAgAEcAZQBuAOkAcgBpAGMAbwQXBDAEMwQwBDsETAQ9BDgEOQAgBD8EQAQ+BEQEMAQ5BDsAIABSAEcAQgBQAHIAbwBmAGkAbAAgAGcA6QBuAOkAcgBpAHEAdQBlACAAUgBWAEIAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBskBp1KAAgAFIARwBCACCCcl9pY8+P8ABHAGUAbgBlAHIAaQBzAGsAIABSAEcAQgAtAHAAcgBvAGYAaQBsAE8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbAXkBegF1QXkBdkF3AAgAFIARwBCACAF2wXcBdwF2QBQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8AUAByAG8AZgBpAGwAIABSAEcAQgAgAGcAZQBuAGUAcgBpAGMAQQBsAGwAZwBlAG0AZQBpAG4AZQBzACAAUgBHAEIALQBQAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3xmbpAaACAAUgBHAEIAIGPPj/Blh072TgCCLAAgAFIARwBCACAw1zDtMNUwoTCkMOsDkwO1A70DuQO6A8wAIAPAA8EDvwPGA68DuwAgAFIARwBCAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDpAHIAaQBjAG8AQQBsAGcAZQBtAGUAZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAZQBsDkIOGw4jDkQOHw4lDkwAIABSAEcAQgAgDhcOMQ5IDicORA4bAEcAZQBuAGUAbAAgAFIARwBCACAAUAByAG8AZgBpAGwAaQBZAGwAZQBpAG4AZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAaQBsAGkARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZXRleHQAAAAAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC4AWFlaIAAAAAAAAPNSAAEAAAABFs9YWVogAAAAAAAAdE0AAD3uAAAD0FhZWiAAAAAAAABadQAArHMAABc0WFlaIAAAAAAAACgaAAAVnwAAuDZjdXJ2AAAAAAAAAAEBzQAAc2YzMgAAAAAAAQxCAAAF3v//8yYAAAeSAAD9kf//+6L///2jAAAD3AAAwGz/wAARCAAUABQDARIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9sAQwAICAgICAgNCAgNEg0NDRIZEhISEhkfGRkZGRkfJh8fHx8fHyYmJiYmJiYmLi4uLi4uNTU1NTU8PDw8PDw8PDw8/9sAQwEJCgoPDg8aDg4aPiojKj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+/90ABAAD/9oADAMBAAIRAxEAPwDd+ME15Y6dY39jd3Fs/nmIiGRkBVlLZOMZI28fjXeeJdEttZSya62lLO6SfY/R8Art+pzx70Ac58LWuZvDIvry5nuZZ5nyZnL7Qh2gLnkDjJ968Pv7fxtptreRJDf2ti8zSMhztG58jJX8M4oA+uaht8+RH/uj+VAH/9D2TXtJt9Ys0tbl5EVZopQY22nKMGHY8ZrUuP8AV/8AAl/nQBNgEYNLQAUUAf/Z"
+                      },
+                      {
+                          "id": "act-102",
+                          "firstName": "Bob",
+                          "lastName": "Pronto",
+                          "userId": "tec-101",
+                          "role": "Field Service",
+                          "createdOn": "2015-07-19T13:00:00+00:00",
+                          "comment": "Status Changed to Accepted. Technician will respond within 48 hours.",
+                          "picture": "data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCARXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAKgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/iB+hJQ0NfUFJPRklMRQABAQAAB9hhcHBsAiAAAG1udHJSR0IgWFlaIAfZAAIAGQALABoAC2Fjc3BBUFBMAAAAAGFwcGwAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2Rlc2MAAAEIAAAAb2RzY20AAAF4AAAFnGNwcnQAAAcUAAAAOHd0cHQAAAdMAAAAFHJYWVoAAAdgAAAAFGdYWVoAAAd0AAAAFGJYWVoAAAeIAAAAFHJUUkMAAAecAAAADmNoYWQAAAesAAAALGJUUkMAAAecAAAADmdUUkMAAAecAAAADmRlc2MAAAAAAAAAFEdlbmVyaWMgUkdCIFByb2ZpbGUAAAAAAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVjAAAAAAAAAB8AAAAMc2tTSwAAACgAAAGEZGFESwAAAC4AAAGsY2FFUwAAACQAAAHadmlWTgAAACQAAAH+cHRCUgAAACYAAAIidWtVQQAAACoAAAJIZnJGVQAAACgAAAJyaHVIVQAAACgAAAKaemhUVwAAABYAAALCbmJOTwAAACYAAALYY3NDWgAAACIAAAL+aGVJTAAAAB4AAAMgaXRJVAAAACgAAAM+cm9STwAAACQAAANmZGVERQAAACwAAAOKa29LUgAAABYAAAO2c3ZTRQAAACYAAALYemhDTgAAABYAAAPMamFKUAAAABoAAAPiZWxHUgAAACIAAAP8cHRQTwAAACYAAAQebmxOTAAAACgAAAREZXNFUwAAACYAAAQedGhUSAAAACQAAARsdHJUUgAAACIAAASQZmlGSQAAACgAAASyaHJIUgAAACgAAATacGxQTAAAACwAAAUCcnVSVQAAACIAAAUuYXJFRwAAACYAAAVQZW5VUwAAACYAAAV2AFYBYQBlAG8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbABHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGUAUABlAHIAZgBpAGwAIABSAEcAQgAgAGcAZQBuAOgAcgBpAGMAQx6lAHUAIABoAOwAbgBoACAAUgBHAEIAIABDAGgAdQBuAGcAUABlAHIAZgBpAGwAIABSAEcAQgAgAEcAZQBuAOkAcgBpAGMAbwQXBDAEMwQwBDsETAQ9BDgEOQAgBD8EQAQ+BEQEMAQ5BDsAIABSAEcAQgBQAHIAbwBmAGkAbAAgAGcA6QBuAOkAcgBpAHEAdQBlACAAUgBWAEIAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBskBp1KAAgAFIARwBCACCCcl9pY8+P8ABHAGUAbgBlAHIAaQBzAGsAIABSAEcAQgAtAHAAcgBvAGYAaQBsAE8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbAXkBegF1QXkBdkF3AAgAFIARwBCACAF2wXcBdwF2QBQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8AUAByAG8AZgBpAGwAIABSAEcAQgAgAGcAZQBuAGUAcgBpAGMAQQBsAGwAZwBlAG0AZQBpAG4AZQBzACAAUgBHAEIALQBQAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3xmbpAaACAAUgBHAEIAIGPPj/Blh072TgCCLAAgAFIARwBCACAw1zDtMNUwoTCkMOsDkwO1A70DuQO6A8wAIAPAA8EDvwPGA68DuwAgAFIARwBCAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDpAHIAaQBjAG8AQQBsAGcAZQBtAGUAZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAZQBsDkIOGw4jDkQOHw4lDkwAIABSAEcAQgAgDhcOMQ5IDicORA4bAEcAZQBuAGUAbAAgAFIARwBCACAAUAByAG8AZgBpAGwAaQBZAGwAZQBpAG4AZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAaQBsAGkARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZXRleHQAAAAAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC4AWFlaIAAAAAAAAPNSAAEAAAABFs9YWVogAAAAAAAAdE0AAD3uAAAD0FhZWiAAAAAAAABadQAArHMAABc0WFlaIAAAAAAAACgaAAAVnwAAuDZjdXJ2AAAAAAAAAAEBzQAAc2YzMgAAAAAAAQxCAAAF3v//8yYAAAeSAAD9kf//+6L///2jAAAD3AAAwGz/wAARCAAUABQDARIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9sAQwAICAgICAgNCAgNEg0NDRIZEhISEhkfGRkZGRkfJh8fHx8fHyYmJiYmJiYmLi4uLi4uNTU1NTU8PDw8PDw8PDw8/9sAQwEJCgoPDg8aDg4aPiojKj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+/90ABAAD/9oADAMBAAIRAxEAPwDd+ME15Y6dY39jd3Fs/nmIiGRkBVlLZOMZI28fjXeeJdEttZSya62lLO6SfY/R8Art+pzx70Ac58LWuZvDIvry5nuZZ5nyZnL7Qh2gLnkDjJ968Pv7fxtptreRJDf2ti8zSMhztG58jJX8M4oA+uaht8+RH/uj+VAH/9D2TXtJt9Ys0tbl5EVZopQY22nKMGHY8ZrUuP8AV/8AAl/nQBNgEYNLQAUUAf/Z"
+                      },
+                      {
+                          "id": "act-103",
+                          "firstName": "Bob",
+                          "lastName": "Pronto",
+                          "userId": "tec-101",
+                          "role": "Field Service",
+                          "createdOn": "2015-07-19T09:15:00+00:00",
+                          "comment": "Enroute to customer location",
+                          "picture": "data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCARXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAKgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/iB+hJQ0NfUFJPRklMRQABAQAAB9hhcHBsAiAAAG1udHJSR0IgWFlaIAfZAAIAGQALABoAC2Fjc3BBUFBMAAAAAGFwcGwAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2Rlc2MAAAEIAAAAb2RzY20AAAF4AAAFnGNwcnQAAAcUAAAAOHd0cHQAAAdMAAAAFHJYWVoAAAdgAAAAFGdYWVoAAAd0AAAAFGJYWVoAAAeIAAAAFHJUUkMAAAecAAAADmNoYWQAAAesAAAALGJUUkMAAAecAAAADmdUUkMAAAecAAAADmRlc2MAAAAAAAAAFEdlbmVyaWMgUkdCIFByb2ZpbGUAAAAAAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVjAAAAAAAAAB8AAAAMc2tTSwAAACgAAAGEZGFESwAAAC4AAAGsY2FFUwAAACQAAAHadmlWTgAAACQAAAH+cHRCUgAAACYAAAIidWtVQQAAACoAAAJIZnJGVQAAACgAAAJyaHVIVQAAACgAAAKaemhUVwAAABYAAALCbmJOTwAAACYAAALYY3NDWgAAACIAAAL+aGVJTAAAAB4AAAMgaXRJVAAAACgAAAM+cm9STwAAACQAAANmZGVERQAAACwAAAOKa29LUgAAABYAAAO2c3ZTRQAAACYAAALYemhDTgAAABYAAAPMamFKUAAAABoAAAPiZWxHUgAAACIAAAP8cHRQTwAAACYAAAQebmxOTAAAACgAAAREZXNFUwAAACYAAAQedGhUSAAAACQAAARsdHJUUgAAACIAAASQZmlGSQAAACgAAASyaHJIUgAAACgAAATacGxQTAAAACwAAAUCcnVSVQAAACIAAAUuYXJFRwAAACYAAAVQZW5VUwAAACYAAAV2AFYBYQBlAG8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbABHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGUAUABlAHIAZgBpAGwAIABSAEcAQgAgAGcAZQBuAOgAcgBpAGMAQx6lAHUAIABoAOwAbgBoACAAUgBHAEIAIABDAGgAdQBuAGcAUABlAHIAZgBpAGwAIABSAEcAQgAgAEcAZQBuAOkAcgBpAGMAbwQXBDAEMwQwBDsETAQ9BDgEOQAgBD8EQAQ+BEQEMAQ5BDsAIABSAEcAQgBQAHIAbwBmAGkAbAAgAGcA6QBuAOkAcgBpAHEAdQBlACAAUgBWAEIAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBskBp1KAAgAFIARwBCACCCcl9pY8+P8ABHAGUAbgBlAHIAaQBzAGsAIABSAEcAQgAtAHAAcgBvAGYAaQBsAE8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbAXkBegF1QXkBdkF3AAgAFIARwBCACAF2wXcBdwF2QBQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8AUAByAG8AZgBpAGwAIABSAEcAQgAgAGcAZQBuAGUAcgBpAGMAQQBsAGwAZwBlAG0AZQBpAG4AZQBzACAAUgBHAEIALQBQAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3xmbpAaACAAUgBHAEIAIGPPj/Blh072TgCCLAAgAFIARwBCACAw1zDtMNUwoTCkMOsDkwO1A70DuQO6A8wAIAPAA8EDvwPGA68DuwAgAFIARwBCAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDpAHIAaQBjAG8AQQBsAGcAZQBtAGUAZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAZQBsDkIOGw4jDkQOHw4lDkwAIABSAEcAQgAgDhcOMQ5IDicORA4bAEcAZQBuAGUAbAAgAFIARwBCACAAUAByAG8AZgBpAGwAaQBZAGwAZQBpAG4AZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAaQBsAGkARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZXRleHQAAAAAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC4AWFlaIAAAAAAAAPNSAAEAAAABFs9YWVogAAAAAAAAdE0AAD3uAAAD0FhZWiAAAAAAAABadQAArHMAABc0WFlaIAAAAAAAACgaAAAVnwAAuDZjdXJ2AAAAAAAAAAEBzQAAc2YzMgAAAAAAAQxCAAAF3v//8yYAAAeSAAD9kf//+6L///2jAAAD3AAAwGz/wAARCAAUABQDARIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9sAQwAICAgICAgNCAgNEg0NDRIZEhISEhkfGRkZGRkfJh8fHx8fHyYmJiYmJiYmLi4uLi4uNTU1NTU8PDw8PDw8PDw8/9sAQwEJCgoPDg8aDg4aPiojKj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+/90ABAAD/9oADAMBAAIRAxEAPwDd+ME15Y6dY39jd3Fs/nmIiGRkBVlLZOMZI28fjXeeJdEttZSya62lLO6SfY/R8Art+pzx70Ac58LWuZvDIvry5nuZZ5nyZnL7Qh2gLnkDjJ968Pv7fxtptreRJDf2ti8zSMhztG58jJX8M4oA+uaht8+RH/uj+VAH/9D2TXtJt9Ys0tbl5EVZopQY22nKMGHY8ZrUuP8AV/8AAl/nQBNgEYNLQAUUAf/Z"
+                      }
+                  ]
+                  
+          404:
+            description: |
+              incident with specified 'id' not found.
+              
+      post:
+        description: |
+          Create/add a new incident-activity
+          
+        body:
+          application/x-www-form-urlencoded:
+            formParameters:
+              comment:
+                displayName: Comment
+                description: |
+                  A brief comment posted by the user
+                  
+                type: string
+                maxLength: 100
+                example: |
+                  On my way to location. Will arrive in 30 min.
+                  
+                required: true
+        responses:
+          201:
+            headers:
+              Location:
+                displayName: Location
+                description: |
+                  The relative URL of the created item.
+                  
+                type: string
+                example: |
+                  /incidents/inc-345
+                  
+                required: true
+            body:
+              application/json:
+                schema: |
+                  {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "id": "incident-activity",
+                    "title": "Incident Activity",
+                    "type": "object",
+                    "description": "A single activity reported on an incident",
+                    "properties": {
+                        "firstName": {
+                           "type": "string",
+                           "description": "The first name of the person who created the activity"
+                        },
+                        "lastName": {
+                           "type": "string",
+                           "description": "The person's last name"
+                        },
+                        "userId": {
+                           "type": "string",
+                           "description": "The person's unique identifier"
+                        },
+                        "role": {
+                           "type": "string",
+                           "description": "The person's role, e.g. Customer or Field Service"
+                        },
+                        "comment": {
+                            "type": "string",
+                            "description": "A brief comment posted by the user",
+                            "maxLength": 100
+                        },
+                        "createdOn": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Date when the activity was created"
+                        },
+                        "picture": {
+                          "type": "string",
+                          "media": {
+                              "binaryEncoding": "base64",
+                              "type": "image/png"
+                          },
+                          "description": "A picture uploaded to the incident activity"
+                        },
+                        "revNum": {
+                          "type": "integer",
+                          "description": "Attribute used for offline cases and incremented when data is updated on the server"
+                        }
+                    }
+                  }
+                  
+                example: |
+                  ""
+                  
+          400:
+            description: |
+              Unable to create the activity record for an incident. This can happen if the incident is no
+              longer open or if a comment was not specified.
+              
+            body:
+              application/json:
+                example: |
+                  {
+                      "error": {
+                          "status": 400,
+                          "message": "Either a comment was not specified for the incident or the incident is closed."
+                      }
+                  }
+                  
+          403:
+            description: |
+              Unable to create activity record because you do not have the proper authorization.
+              
+            body:
+              application/json:
+                example: |
+                  {
+                      "error": {
+                          "status": 403,
+                          "message": "User is not authorized to create an incident activity."
+                      }
+                  }
+                  
+      /{actid}:
+        displayName: Incident Activity
+        description: |
+          A single incident-activity
+          
+        type:
+          item:
+            item-path-name: incident-activity
+            example-item: |
+              {
+                "id": "act-101",
+                "firstName": "Ricky",
+                "lastName": "Barker",
+                "userId": "cus-101",
+                "role": "Customer",
+                "createdOn": "2015-07-18T09:00:41+00:00",
+                "comment": "Fridge is utterly broken!",
+                "picture": "data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCARXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAKgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/iB+hJQ0NfUFJPRklMRQABAQAAB9hhcHBsAiAAAG1udHJSR0IgWFlaIAfZAAIAGQALABoAC2Fjc3BBUFBMAAAAAGFwcGwAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2Rlc2MAAAEIAAAAb2RzY20AAAF4AAAFnGNwcnQAAAcUAAAAOHd0cHQAAAdMAAAAFHJYWVoAAAdgAAAAFGdYWVoAAAd0AAAAFGJYWVoAAAeIAAAAFHJUUkMAAAecAAAADmNoYWQAAAesAAAALGJUUkMAAAecAAAADmdUUkMAAAecAAAADmRlc2MAAAAAAAAAFEdlbmVyaWMgUkdCIFByb2ZpbGUAAAAAAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVjAAAAAAAAAB8AAAAMc2tTSwAAACgAAAGEZGFESwAAAC4AAAGsY2FFUwAAACQAAAHadmlWTgAAACQAAAH+cHRCUgAAACYAAAIidWtVQQAAACoAAAJIZnJGVQAAACgAAAJyaHVIVQAAACgAAAKaemhUVwAAABYAAALCbmJOTwAAACYAAALYY3NDWgAAACIAAAL+aGVJTAAAAB4AAAMgaXRJVAAAACgAAAM+cm9STwAAACQAAANmZGVERQAAACwAAAOKa29LUgAAABYAAAO2c3ZTRQAAACYAAALYemhDTgAAABYAAAPMamFKUAAAABoAAAPiZWxHUgAAACIAAAP8cHRQTwAAACYAAAQebmxOTAAAACgAAAREZXNFUwAAACYAAAQedGhUSAAAACQAAARsdHJUUgAAACIAAASQZmlGSQAAACgAAASyaHJIUgAAACgAAATacGxQTAAAACwAAAUCcnVSVQAAACIAAAUuYXJFRwAAACYAAAVQZW5VUwAAACYAAAV2AFYBYQBlAG8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbABHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGUAUABlAHIAZgBpAGwAIABSAEcAQgAgAGcAZQBuAOgAcgBpAGMAQx6lAHUAIABoAOwAbgBoACAAUgBHAEIAIABDAGgAdQBuAGcAUABlAHIAZgBpAGwAIABSAEcAQgAgAEcAZQBuAOkAcgBpAGMAbwQXBDAEMwQwBDsETAQ9BDgEOQAgBD8EQAQ+BEQEMAQ5BDsAIABSAEcAQgBQAHIAbwBmAGkAbAAgAGcA6QBuAOkAcgBpAHEAdQBlACAAUgBWAEIAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBskBp1KAAgAFIARwBCACCCcl9pY8+P8ABHAGUAbgBlAHIAaQBzAGsAIABSAEcAQgAtAHAAcgBvAGYAaQBsAE8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbAXkBegF1QXkBdkF3AAgAFIARwBCACAF2wXcBdwF2QBQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8AUAByAG8AZgBpAGwAIABSAEcAQgAgAGcAZQBuAGUAcgBpAGMAQQBsAGwAZwBlAG0AZQBpAG4AZQBzACAAUgBHAEIALQBQAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3xmbpAaACAAUgBHAEIAIGPPj/Blh072TgCCLAAgAFIARwBCACAw1zDtMNUwoTCkMOsDkwO1A70DuQO6A8wAIAPAA8EDvwPGA68DuwAgAFIARwBCAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDpAHIAaQBjAG8AQQBsAGcAZQBtAGUAZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAZQBsDkIOGw4jDkQOHw4lDkwAIABSAEcAQgAgDhcOMQ5IDicORA4bAEcAZQBuAGUAbAAgAFIARwBCACAAUAByAG8AZgBpAGwAaQBZAGwAZQBpAG4AZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAaQBsAGkARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZXRleHQAAAAAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC4AWFlaIAAAAAAAAPNSAAEAAAABFs9YWVogAAAAAAAAdE0AAD3uAAAD0FhZWiAAAAAAAABadQAArHMAABc0WFlaIAAAAAAAACgaAAAVnwAAuDZjdXJ2AAAAAAAAAAEBzQAAc2YzMgAAAAAAAQxCAAAF3v//8yYAAAeSAAD9kf//+6L///2jAAAD3AAAwGz/wAARCAAUABQDARIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9sAQwAICAgICAgNCAgNEg0NDRIZEhISEhkfGRkZGRkfJh8fHx8fHyYmJiYmJiYmLi4uLi4uNTU1NTU8PDw8PDw8PDw8/9sAQwEJCgoPDg8aDg4aPiojKj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+/90ABAAD/9oADAMBAAIRAxEAPwDd+ME15Y6dY39jd3Fs/nmIiGRkBVlLZOMZI28fjXeeJdEttZSya62lLO6SfY/R8Art+pzx70Ac58LWuZvDIvry5nuZZ5nyZnL7Qh2gLnkDjJ968Pv7fxtptreRJDf2ti8zSMhztG58jJX8M4oA+uaht8+RH/uj+VAH/9D2TXtJt9Ys0tbl5EVZopQY22nKMGHY8ZrUuP8AV/8AAl/nQBNgEYNLQAUUAf/Z"
+              }
+              
+            example-patchitem: |
+              {
+                "comment": "Fridge doesn't power up at all"
+              }
+              
+        uriParameters:
+          actid:
+            displayName: Incident Activity id
+            type: string
+            example: |
+              id=act-110
+              
+            required: true
+        get:
+          description: |
+            Get a single incident-activity.
+            
+          responses:
+            200:
+              body:
+                application/json:
+                  schema: incident-activity
+                  example: |
+                    {
+                      "id": "act-101",
+                      "firstName": "Ricky",
+                      "lastName": "Barker",
+                      "userId": "cus-101",
+                      "role": "Customer",
+                      "createdOn": "2015-07-18T09:00:41+00:00",
+                      "comment": "Fridge is utterly broken!",
+                      "picture": "data:image/png;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCARXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAKgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/iB+hJQ0NfUFJPRklMRQABAQAAB9hhcHBsAiAAAG1udHJSR0IgWFlaIAfZAAIAGQALABoAC2Fjc3BBUFBMAAAAAGFwcGwAAAAAAAAAAAAAAAAAAAAAAAD21gABAAAAANMtYXBwbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2Rlc2MAAAEIAAAAb2RzY20AAAF4AAAFnGNwcnQAAAcUAAAAOHd0cHQAAAdMAAAAFHJYWVoAAAdgAAAAFGdYWVoAAAd0AAAAFGJYWVoAAAeIAAAAFHJUUkMAAAecAAAADmNoYWQAAAesAAAALGJUUkMAAAecAAAADmdUUkMAAAecAAAADmRlc2MAAAAAAAAAFEdlbmVyaWMgUkdCIFByb2ZpbGUAAAAAAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtbHVjAAAAAAAAAB8AAAAMc2tTSwAAACgAAAGEZGFESwAAAC4AAAGsY2FFUwAAACQAAAHadmlWTgAAACQAAAH+cHRCUgAAACYAAAIidWtVQQAAACoAAAJIZnJGVQAAACgAAAJyaHVIVQAAACgAAAKaemhUVwAAABYAAALCbmJOTwAAACYAAALYY3NDWgAAACIAAAL+aGVJTAAAAB4AAAMgaXRJVAAAACgAAAM+cm9STwAAACQAAANmZGVERQAAACwAAAOKa29LUgAAABYAAAO2c3ZTRQAAACYAAALYemhDTgAAABYAAAPMamFKUAAAABoAAAPiZWxHUgAAACIAAAP8cHRQTwAAACYAAAQebmxOTAAAACgAAAREZXNFUwAAACYAAAQedGhUSAAAACQAAARsdHJUUgAAACIAAASQZmlGSQAAACgAAASyaHJIUgAAACgAAATacGxQTAAAACwAAAUCcnVSVQAAACIAAAUuYXJFRwAAACYAAAVQZW5VUwAAACYAAAV2AFYBYQBlAG8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbABHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGUAUABlAHIAZgBpAGwAIABSAEcAQgAgAGcAZQBuAOgAcgBpAGMAQx6lAHUAIABoAOwAbgBoACAAUgBHAEIAIABDAGgAdQBuAGcAUABlAHIAZgBpAGwAIABSAEcAQgAgAEcAZQBuAOkAcgBpAGMAbwQXBDAEMwQwBDsETAQ9BDgEOQAgBD8EQAQ+BEQEMAQ5BDsAIABSAEcAQgBQAHIAbwBmAGkAbAAgAGcA6QBuAOkAcgBpAHEAdQBlACAAUgBWAEIAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBskBp1KAAgAFIARwBCACCCcl9pY8+P8ABHAGUAbgBlAHIAaQBzAGsAIABSAEcAQgAtAHAAcgBvAGYAaQBsAE8AYgBlAGMAbgD9ACAAUgBHAEIAIABwAHIAbwBmAGkAbAXkBegF1QXkBdkF3AAgAFIARwBCACAF2wXcBdwF2QBQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8AUAByAG8AZgBpAGwAIABSAEcAQgAgAGcAZQBuAGUAcgBpAGMAQQBsAGwAZwBlAG0AZQBpAG4AZQBzACAAUgBHAEIALQBQAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3xmbpAaACAAUgBHAEIAIGPPj/Blh072TgCCLAAgAFIARwBCACAw1zDtMNUwoTCkMOsDkwO1A70DuQO6A8wAIAPAA8EDvwPGA68DuwAgAFIARwBCAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDpAHIAaQBjAG8AQQBsAGcAZQBtAGUAZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAZQBsDkIOGw4jDkQOHw4lDkwAIABSAEcAQgAgDhcOMQ5IDicORA4bAEcAZQBuAGUAbAAgAFIARwBCACAAUAByAG8AZgBpAGwAaQBZAGwAZQBpAG4AZQBuACAAUgBHAEIALQBwAHIAbwBmAGkAaQBsAGkARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZXRleHQAAAAAQ29weXJpZ2h0IDIwMDcgQXBwbGUgSW5jLiwgYWxsIHJpZ2h0cyByZXNlcnZlZC4AWFlaIAAAAAAAAPNSAAEAAAABFs9YWVogAAAAAAAAdE0AAD3uAAAD0FhZWiAAAAAAAABadQAArHMAABc0WFlaIAAAAAAAACgaAAAVnwAAuDZjdXJ2AAAAAAAAAAEBzQAAc2YzMgAAAAAAAQxCAAAF3v//8yYAAAeSAAD9kf//+6L///2jAAAD3AAAwGz/wAARCAAUABQDARIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9sAQwAICAgICAgNCAgNEg0NDRIZEhISEhkfGRkZGRkfJh8fHx8fHyYmJiYmJiYmLi4uLi4uNTU1NTU8PDw8PDw8PDw8/9sAQwEJCgoPDg8aDg4aPiojKj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+/90ABAAD/9oADAMBAAIRAxEAPwDd+ME15Y6dY39jd3Fs/nmIiGRkBVlLZOMZI28fjXeeJdEttZSya62lLO6SfY/R8Art+pzx70Ac58LWuZvDIvry5nuZZ5nyZnL7Qh2gLnkDjJ968Pv7fxtptreRJDf2ti8zSMhztG58jJX8M4oA+uaht8+RH/uj+VAH/9D2TXtJt9Ys0tbl5EVZopQY22nKMGHY8ZrUuP8AV/8AAl/nQBNgEYNLQAUUAf/Z"
+                    }
+                    
+            404:
+              body:
+                application/json:
+                  example: |
+                    {"message": "incident-activity not found" }
+                    
+        patch:
+          description: |
+            Update a specific incident-activity
+            
+          body:
+            application/json:
+              schema: |
+                {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "id": "patch-incident-activity",
+                  "title": "Update Activity Incident",
+                  "type": "object",
+                  "description": "A single activity reported on an incident",
+                  "properties": {
+                    "comment": {
+                        "type": "string",
+                        "description": "A brief comment posted by the user",
+                        "maxLength": 100
+                    },
+                    "picture": {
+                      "type": "string",
+                      "media": {
+                          "binaryEncoding": "base64",
+                          "type": "image/png"
+                      },
+                      "description": "A picture uploaded to the incident activity"
+                    },
+                    "revNum": {
+                      "type": "integer",
+                      "description": "Attribute used for offline cases and incremented when data is updated on the server"
+                    }
+                  },
+                  "minProperties": 1,
+                  "additionalProperties": false
+                }
+                
+              example: |
+                {
+                  "comment": "An updated comment"
+                }
+                
+          responses:
+            200:
+              headers:
+                Location:
+                  displayName: Location
+                  description: |
+                    The relative URL of the created item.
+                    
+                  type: string
+                  example: |
+                    /incidents/inc-345
+                    
+                  required: true
+              body:
+                application/json:
+                  schema: |
+                    {
+                      "$schema": "http://json-schema.org/draft-04/schema#",
+                      "id": "incident-activity",
+                      "title": "Incident Activity",
+                      "type": "object",
+                      "description": "A single activity reported on an incident",
+                      "properties": {
+                          "firstName": {
+                             "type": "string",
+                             "description": "The first name of the person who created the activity"
+                          },
+                          "lastName": {
+                             "type": "string",
+                             "description": "The person's last name"
+                          },
+                          "userId": {
+                             "type": "string",
+                             "description": "The person's unique identifier"
+                          },
+                          "role": {
+                             "type": "string",
+                             "description": "The person's role, e.g. Customer or Field Service"
+                          },
+                          "comment": {
+                              "type": "string",
+                              "description": "A brief comment posted by the user",
+                              "maxLength": 100
+                          },
+                          "createdOn": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "Date when the activity was created"
+                          },
+                          "picture": {
+                            "type": "string",
+                            "media": {
+                                "binaryEncoding": "base64",
+                                "type": "image/png"
+                            },
+                            "description": "A picture uploaded to the incident activity"
+                          },
+                          "revNum": {
+                            "type": "integer",
+                            "description": "Attribute used for offline cases and incremented when data is updated on the server"
+                          }
+                      }
+                    }
+                    
+                  example: |
+                    ""
+                    
+            404:
+              body:
+                application/json:
+                  example: |
+                    {"message": "Unable to find incident-activity record."}
+                    
+        delete:
+          description: |
+            Remove/close the specific incident-activity.
+            
+          responses:
+            204:
+              description: |
+                The specific incident-activity item was deleted successfully.
+                
+/customers:
+  displayName: Customers
+  description: |
+    List of customers.
+    
+  type:
+    collection:
+      path-name: customers
+      item-path-name: customer
+      example-collection: |
+        {
+          "count": 3,
+          "result": [
+            {
+              "id": "cus-120",
+              "username": "cbrown",
+              "firstName": "Charlie",
+              "lastName": "Brown",
+              "mobile": "6505067000",
+              "home": "5105551212",
+              "email": "cbrown@universe.com",
+              "address": {
+                "id": "loc-5",
+                "formattedAddress": "4500 Broadway,\nOakland, CA 94611",
+                "street1": "4500 Broadway",
+                "street2": "",
+                "city": "Oakland",
+                "state": "CA",
+                "zip": "94611",
+                "country": "USA",
+                "latitude": "37.832892",
+                "longitude": "-122.253260"
+              }
+            },
+            {
+              "id": "cus-121",
+              "username": "lvanpelt",
+              "firstName": "Lucy",
+              "lastName": "Van Pelt",
+              "mobile": "6505067000",
+              "home": "5105551212",
+              "email": "lvanpelt@universe.com",
+              "address": {
+                "id": "loc-6",
+                "formattedAddress": "4226 Piedmont Ave,\nOakland, CA 94611",
+                "street1": "4226 Piedmont Ave",
+                "street2": "",
+                "city": "Oakland",
+                "state": "CA",
+                "zip": "94611",
+                "country": "USA",
+                "latitude": "37.827911",
+                "longitude": "-122.249982"
+              }
+            },
+            {
+              "id": "cus-122",
+              "username": "ppatty",
+              "firstName": "Peppermint",
+              "lastName": "Patty",
+              "mobile": "6505067000",
+              "email": "ppatty@universe.com",
+              "address": {
+                "id": "loc-9",
+                "formattedAddress": "2100 Ward Street,\nBerkeley, CA 94702",
+                "street1": "2100 Ward Street",
+                "street2": "",
+                "city": "Berkeley",
+                "state": "CA",
+                "zip": "94702",
+                "country": "USA",
+                "latitude": "37.859333",
+                "longitude": "-122.266792"
+              }
+            }
+          ]
+        }
+        
+      example-newitem: |
+        {
+            "firstName": "Hans",
+            "lastName": "Schroeder",
+            "mobile": "6505067000",
+            "email": "hans.schroeder@universe.com"
+        }
+        
+      example-item: |
+        {
+            "id": "cus-150",
+            "username": "hschroeder",
+            "firstName": "Hans",
+            "lastName": "Schroeder",
+            "mobile": "6505067000",
+            "email": "hans.schroeder@universe.com"
+        }
+        
+  get:
+    description: |
+      Get a list of customers.
+      
+    protocols: [HTTPS]
+    responses:
+      200:
+        body:
+          application/json:
+            schema: customers
+            example: |
+              {
+                "count": 3,
+                "result": [
+                  {
+                    "id": "cus-120",
+                    "username": "cbrown",
+                    "firstName": "Charlie",
+                    "lastName": "Brown",
+                    "mobile": "6505067000",
+                    "home": "5105551212",
+                    "email": "cbrown@universe.com",
+                    "address": {
+                      "id": "loc-5",
+                      "formattedAddress": "4500 Broadway,\nOakland, CA 94611",
+                      "street1": "4500 Broadway",
+                      "street2": "",
+                      "city": "Oakland",
+                      "state": "CA",
+                      "zip": "94611",
+                      "country": "USA",
+                      "latitude": "37.832892",
+                      "longitude": "-122.253260"
+                    }
+                  },
+                  {
+                    "id": "cus-121",
+                    "username": "lvanpelt",
+                    "firstName": "Lucy",
+                    "lastName": "Van Pelt",
+                    "mobile": "6505067000",
+                    "home": "5105551212",
+                    "email": "lvanpelt@universe.com",
+                    "address": {
+                      "id": "loc-6",
+                      "formattedAddress": "4226 Piedmont Ave,\nOakland, CA 94611",
+                      "street1": "4226 Piedmont Ave",
+                      "street2": "",
+                      "city": "Oakland",
+                      "state": "CA",
+                      "zip": "94611",
+                      "country": "USA",
+                      "latitude": "37.827911",
+                      "longitude": "-122.249982"
+                    }
+                  },
+                  {
+                    "id": "cus-122",
+                    "username": "ppatty",
+                    "firstName": "Peppermint",
+                    "lastName": "Patty",
+                    "mobile": "6505067000",
+                    "email": "ppatty@universe.com",
+                    "address": {
+                      "id": "loc-9",
+                      "formattedAddress": "2100 Ward Street,\nBerkeley, CA 94702",
+                      "street1": "2100 Ward Street",
+                      "street2": "",
+                      "city": "Berkeley",
+                      "state": "CA",
+                      "zip": "94702",
+                      "country": "USA",
+                      "latitude": "37.859333",
+                      "longitude": "-122.266792"
+                    }
+                  }
+                ]
+              }
+              
+  post:
+    description: |
+      Create a new customer
+      
+    protocols: [HTTPS]
+    body:
+      application/json:
+        schema: new-customer
+        example: |
+          {
+              "firstName": "Hans",
+              "lastName": "Schroeder",
+              "mobile": "6505067000",
+              "email": "hans.schroeder@universe.com"
+          }
+          
+    responses:
+      201:
+        headers:
+          Location:
+            displayName: Location
+            description: |
+              The relative URL of the created item.
+              
+            type: string
+            example: |
+              /incidents/inc-345
+              
+            required: true
+        body:
+          application/json:
+            schema: customer
+            example: |
+              {
+                  "id": "cus-150",
+                  "username": "hschroeder",
+                  "firstName": "Hans",
+                  "lastName": "Schroeder",
+                  "mobile": "6505067000",
+                  "email": "hans.schroeder@universe.com"
+              }
+              
+  /{id}:
+    displayName: Customer
+    description: |
+      A single customer
+      
+    type:
+      item:
+        item-path-name: customer
+        example-item: |
+          {
+            "id": "cus-133",
+            "username": "rdawson",
+            "firstName": "Rosie",
+            "lastName": "Dawson",
+            "mobile": "6505067000",
+            "email": "rdawson@galaxy.com",
+            "address": {
+              "id": "loc-5",
+              "formattedAddress": "4500 Broadway,\nOakland, CA 94611",
+              "street1": "4500 Broadway",
+              "street2": "",
+              "city": "Oakland",
+              "state": "CA",
+              "zip": "94611",
+              "country": "USA",
+              "latitude": "37.832892",
+              "longitude": "-122.253260"
+            }
+          }
+          
+        example-patchitem: |
+          {
+            "email": "rosie.dawson@galaxy.com"
+          }
+          
+    uriParameters:
+      id:
+        displayName: Technician User Name
+        type: string
+        example: |
+          id=cus-133
+          
+        required: true
+    get:
+      description: |
+        Get a single customer.
+        
+      responses:
+        200:
+          body:
+            application/json:
+              schema: customer
+              example: |
+                {
+                  "id": "cus-133",
+                  "username": "rdawson",
+                  "firstName": "Rosie",
+                  "lastName": "Dawson",
+                  "mobile": "6505067000",
+                  "email": "rdawson@galaxy.com",
+                  "address": {
+                    "id": "loc-5",
+                    "formattedAddress": "4500 Broadway,\nOakland, CA 94611",
+                    "street1": "4500 Broadway",
+                    "street2": "",
+                    "city": "Oakland",
+                    "state": "CA",
+                    "zip": "94611",
+                    "country": "USA",
+                    "latitude": "37.832892",
+                    "longitude": "-122.253260"
+                  }
+                }
+                
+        404:
+          body:
+            application/json:
+              example: |
+                {"message": "customer not found" }
+                
+    patch:
+      description: |
+        Update a specific customer.
+        
+      body:
+        application/json:
+          schema: patch-customer
+          example: |
+            {
+              "email": "rosie.dawson@galaxy.com"
+            }
+            
+      responses:
+        200:
+          body:
+            application/json:
+              schema: customer
+              example: |
+                {
+                  "id": "cus-133",
+                  "username": "rdawson",
+                  "firstName": "Rosie",
+                  "lastName": "Dawson",
+                  "mobile": "6505067000",
+                  "email": "rdawson@galaxy.com",
+                  "address": {
+                    "id": "loc-5",
+                    "formattedAddress": "4500 Broadway,\nOakland, CA 94611",
+                    "street1": "4500 Broadway",
+                    "street2": "",
+                    "city": "Oakland",
+                    "state": "CA",
+                    "zip": "94611",
+                    "country": "USA",
+                    "latitude": "37.832892",
+                    "longitude": "-122.253260"
+                  }
+                }
+                
+        404:
+          body:
+            application/json:
+              example: |
+                {"message": "Unable to find customer record."}
+                
+    delete:
+      description: |
+        Remove/close the specific customer.
+        
+      responses:
+        204:
+          description: |
+            The specific customer item was deleted successfully.
+            
+/users/~:
+  displayName: Technician Profile
+  description: |
+    Profile of technician currently logged in.
+    
+  type:
+    item:
+      item-path-name: technician
+      example-item: |
+        {
+          "id": 3,
+          "username": "rosie",
+          "firstName": "Rosie",
+          "lastName": "Riveter",
+          "role": "Field Service",
+          "mobile": "6505067000",
+          "home": "",
+          "email": "rosie@fixitfast.com",
+          "photo": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEYAAABGCAYAAABxLuKEAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABR1JREFUeNrsXE1oXFUUfj/z5mUkTYLdNDLatdONmKRgCo3RhV04Rt1IId0UEiVJwTTUUghISVrQhRXaFIlQcKN01Z+4CIItLtpC6zbZuDJGYhctVIvzP+N33pyRl3be753Jm5ncAyf35d5z7jvve+eee86dSdRKpaJIep40CYEERgIjgZHASGAkMBIYCYwERgKzmykW5c1/uPHzG2iOgt8B7+fu38E/gb8/Ovb2vahsU6MoIgHIPjSXNU37QI/piq7riqqq1hjZUyqVlFKxpJTL5WvomgJAf3U8MADlAJpVwzCSMcPdYYuFolIoFDZxeQTgrHVsjGFPWTXi3qBY6xwyJEs6rNuxwfey5Skx/6GNZEmHdDsSGAq0FFP8eEo9zyFdDtYd5zHHKdCGJdY93onAjNDuExqYqu5I2+xKcG+/otnECwlT5F6ZfzM5NF32PuxWrZHgAYg0mlnwEHc9AF8Ar3io5pSKYipqU+PYYTRnwMO8GizbAN5KU5cSbrwAl74ZN+OjePvdxHRNfRhe8FD/U8Q7WXfDxbaP0dyGPUcSiUSP3Tayu2nAYPJ3cZN55BWKPVbQNffN49e0yxR3SuVSaGAoGwb94mDbAJols8vULNvU521jT2+Kx5yknaGWum8LVOjjXWPWRf8KpfmhganqXnEYPhWPx3Vs6WFtEwJmUNecdxUeG3TRv4fa5zql+UGJdEiX5nAQeVPTNRHbmrhdq7afzjRFtU+x6B8ckuV6acpFrLeeJwe0LTQwv7rFCI4BDzzm2KKCsJAHOD48xyoi89UiknWdaB0eJWpbaGC+onVeb2exjgqqMeCCj3moSh6CF1zLZXOWR9jnrJQrVh+NkQynBV6V9bJT/ApoW3BgkAv8COTP4Q3W3sD/b4P7zvvIZWpE5ysf4i0PQ3cpm8n+huQtD36azWbXqY/GSIZlvWgZYH6Xz+cVu+fYbQuaywTOfLHtvYfmU/BB7roP/hp8M4qTtlrmC7sohoyDPwG/Rs5Ssw0ygW3byZKgqcBEXhI0mhYf9osB06pFpJ0OLK+TGy+C93qIHlqbTN1lHa9p6QzmrofMI/A85vymqR7zZOWtP9Ak6wy935u+dcNlvi8Nw9jjllNQcESg/Izm8mnjaTrFq5fV2naevdjBvsClIzBLtz8aQ3O9ztDG9OjV/X53pWRXwlTsHEfNAboE0LpdHsIVFOuG1QdMw1NSPkB5lWTdQKml/aAeF1DI5ot4aYppmtsY9IrQdk0pdyymJ3mpCBGKOrrvnA/ROZYVJToVeNkL4NAlAZ/XzsBrXhcEhppxeI1b5KWxYyKnfuwtZOuJIAfwoWolw7BK1W8Bji4ITtyj4p1lGRFQyMZlgBLY1sDAWJ8cxnR6CzMN8JoJcF+9opDGRL2FbMQcA2HmCbV++QUswmuSguD0MTjP0gSPiXhLkmNLKP1QwNAugHhDkf6SiPEcDGk52ZcMXZ8MEigd6CKWkOcu2fDzGPaaMaHsEkYDgH6ucWo0Tn1hH8iec4ksxci/H8PGz7EtGm/RUZsVfa3EXpNCRpzm5ZVqgLe0PzC1WANgqEyoNCC2dBYwSNeHbem9BOaZeqdlSH45MaDHbGUzuf52f7hcLudHbNM3ML3pWy+1OyjTo1dVuZRkjJHASGAkMLscmH+i+Ao+3/PvVs585wuFwudoX9xhbB6DzzY0E4/6L/V9fODmSmuTqbZYSh1DqvzfDtJjJDASGAmMBEYCI4GRwEhgdgX9J8AAK5PK7M0jMtYAAAAASUVORK5CYII=",
+          "location": {
+              "id": "loc-0",
+              "formattedAddress": "200 Oracle Parkway,\nRedwood Shores, CA 94065",
+              "street1": "200 Oracle Parkway",
+              "street2": "",
+              "city": "Redwood Shores",
+              "state": "CA",
+              "zip": "94065",
+              "country": "USA",
+              "latitude": "37.530737",
+              "longitude": "-122.265557"
+          }
+        }
+        
+      example-patchitem: |
+        {
+          "home": "5105552222"
+        }
+        
+  get:
+    description: |
+      Get a single technician.
+      
+    protocols: [HTTPS]
+    responses:
+      200:
+        body:
+          application/json:
+            schema: technician
+            example: |
+              {
+                "id": 3,
+                "username": "rosie",
+                "firstName": "Rosie",
+                "lastName": "Riveter",
+                "role": "Field Service",
+                "mobile": "6505067000",
+                "home": "",
+                "email": "rosie@fixitfast.com",
+                "photo": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEYAAABGCAYAAABxLuKEAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABR1JREFUeNrsXE1oXFUUfj/z5mUkTYLdNDLatdONmKRgCo3RhV04Rt1IId0UEiVJwTTUUghISVrQhRXaFIlQcKN01Z+4CIItLtpC6zbZuDJGYhctVIvzP+N33pyRl3be753Jm5ncAyf35d5z7jvve+eee86dSdRKpaJIep40CYEERgIjgZHASGAkMBIYCYwERgKzmykW5c1/uPHzG2iOgt8B7+fu38E/gb8/Ovb2vahsU6MoIgHIPjSXNU37QI/piq7riqqq1hjZUyqVlFKxpJTL5WvomgJAf3U8MADlAJpVwzCSMcPdYYuFolIoFDZxeQTgrHVsjGFPWTXi3qBY6xwyJEs6rNuxwfey5Skx/6GNZEmHdDsSGAq0FFP8eEo9zyFdDtYd5zHHKdCGJdY93onAjNDuExqYqu5I2+xKcG+/otnECwlT5F6ZfzM5NF32PuxWrZHgAYg0mlnwEHc9AF8Ar3io5pSKYipqU+PYYTRnwMO8GizbAN5KU5cSbrwAl74ZN+OjePvdxHRNfRhe8FD/U8Q7WXfDxbaP0dyGPUcSiUSP3Tayu2nAYPJ3cZN55BWKPVbQNffN49e0yxR3SuVSaGAoGwb94mDbAJols8vULNvU521jT2+Kx5yknaGWum8LVOjjXWPWRf8KpfmhganqXnEYPhWPx3Vs6WFtEwJmUNecdxUeG3TRv4fa5zql+UGJdEiX5nAQeVPTNRHbmrhdq7afzjRFtU+x6B8ckuV6acpFrLeeJwe0LTQwv7rFCI4BDzzm2KKCsJAHOD48xyoi89UiknWdaB0eJWpbaGC+onVeb2exjgqqMeCCj3moSh6CF1zLZXOWR9jnrJQrVh+NkQynBV6V9bJT/ApoW3BgkAv8COTP4Q3W3sD/b4P7zvvIZWpE5ysf4i0PQ3cpm8n+huQtD36azWbXqY/GSIZlvWgZYH6Xz+cVu+fYbQuaywTOfLHtvYfmU/BB7roP/hp8M4qTtlrmC7sohoyDPwG/Rs5Ssw0ygW3byZKgqcBEXhI0mhYf9osB06pFpJ0OLK+TGy+C93qIHlqbTN1lHa9p6QzmrofMI/A85vymqR7zZOWtP9Ak6wy935u+dcNlvi8Nw9jjllNQcESg/Izm8mnjaTrFq5fV2naevdjBvsClIzBLtz8aQ3O9ztDG9OjV/X53pWRXwlTsHEfNAboE0LpdHsIVFOuG1QdMw1NSPkB5lWTdQKml/aAeF1DI5ot4aYppmtsY9IrQdk0pdyymJ3mpCBGKOrrvnA/ROZYVJToVeNkL4NAlAZ/XzsBrXhcEhppxeI1b5KWxYyKnfuwtZOuJIAfwoWolw7BK1W8Bji4ITtyj4p1lGRFQyMZlgBLY1sDAWJ8cxnR6CzMN8JoJcF+9opDGRL2FbMQcA2HmCbV++QUswmuSguD0MTjP0gSPiXhLkmNLKP1QwNAugHhDkf6SiPEcDGk52ZcMXZ8MEigd6CKWkOcu2fDzGPaaMaHsEkYDgH6ucWo0Tn1hH8iec4ksxci/H8PGz7EtGm/RUZsVfa3EXpNCRpzm5ZVqgLe0PzC1WANgqEyoNCC2dBYwSNeHbem9BOaZeqdlSH45MaDHbGUzuf52f7hcLudHbNM3ML3pWy+1OyjTo1dVuZRkjJHASGAkMLscmH+i+Ao+3/PvVs585wuFwudoX9xhbB6DzzY0E4/6L/V9fODmSmuTqbZYSh1DqvzfDtJjJDASGAmMBEYCI4GRwEhgdgX9J8AAK5PK7M0jMtYAAAAASUVORK5CYII=",
+                "location": {
+                    "id": "loc-0",
+                    "formattedAddress": "200 Oracle Parkway,\nRedwood Shores, CA 94065",
+                    "street1": "200 Oracle Parkway",
+                    "street2": "",
+                    "city": "Redwood Shores",
+                    "state": "CA",
+                    "zip": "94065",
+                    "country": "USA",
+                    "latitude": "37.530737",
+                    "longitude": "-122.265557"
+                }
+              }
+              
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "technician not found" }
+              
+  patch:
+    description: |
+      Update a specific technician.
+      
+    protocols: [HTTPS]
+    body:
+      application/json:
+        schema: patch-technician
+        example: |
+          {
+            "home": "5105552222"
+          }
+          
+    responses:
+      200:
+        body:
+          application/json:
+            schema: technician
+            example: |
+              {
+                "id": 3,
+                "username": "rosie",
+                "firstName": "Rosie",
+                "lastName": "Riveter",
+                "role": "Field Service",
+                "mobile": "6505067000",
+                "home": "",
+                "email": "rosie@fixitfast.com",
+                "photo": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEYAAABGCAYAAABxLuKEAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABR1JREFUeNrsXE1oXFUUfj/z5mUkTYLdNDLatdONmKRgCo3RhV04Rt1IId0UEiVJwTTUUghISVrQhRXaFIlQcKN01Z+4CIItLtpC6zbZuDJGYhctVIvzP+N33pyRl3be753Jm5ncAyf35d5z7jvve+eee86dSdRKpaJIep40CYEERgIjgZHASGAkMBIYCYwERgKzmykW5c1/uPHzG2iOgt8B7+fu38E/gb8/Ovb2vahsU6MoIgHIPjSXNU37QI/piq7riqqq1hjZUyqVlFKxpJTL5WvomgJAf3U8MADlAJpVwzCSMcPdYYuFolIoFDZxeQTgrHVsjGFPWTXi3qBY6xwyJEs6rNuxwfey5Skx/6GNZEmHdDsSGAq0FFP8eEo9zyFdDtYd5zHHKdCGJdY93onAjNDuExqYqu5I2+xKcG+/otnECwlT5F6ZfzM5NF32PuxWrZHgAYg0mlnwEHc9AF8Ar3io5pSKYipqU+PYYTRnwMO8GizbAN5KU5cSbrwAl74ZN+OjePvdxHRNfRhe8FD/U8Q7WXfDxbaP0dyGPUcSiUSP3Tayu2nAYPJ3cZN55BWKPVbQNffN49e0yxR3SuVSaGAoGwb94mDbAJols8vULNvU521jT2+Kx5yknaGWum8LVOjjXWPWRf8KpfmhganqXnEYPhWPx3Vs6WFtEwJmUNecdxUeG3TRv4fa5zql+UGJdEiX5nAQeVPTNRHbmrhdq7afzjRFtU+x6B8ckuV6acpFrLeeJwe0LTQwv7rFCI4BDzzm2KKCsJAHOD48xyoi89UiknWdaB0eJWpbaGC+onVeb2exjgqqMeCCj3moSh6CF1zLZXOWR9jnrJQrVh+NkQynBV6V9bJT/ApoW3BgkAv8COTP4Q3W3sD/b4P7zvvIZWpE5ysf4i0PQ3cpm8n+huQtD36azWbXqY/GSIZlvWgZYH6Xz+cVu+fYbQuaywTOfLHtvYfmU/BB7roP/hp8M4qTtlrmC7sohoyDPwG/Rs5Ssw0ygW3byZKgqcBEXhI0mhYf9osB06pFpJ0OLK+TGy+C93qIHlqbTN1lHa9p6QzmrofMI/A85vymqR7zZOWtP9Ak6wy935u+dcNlvi8Nw9jjllNQcESg/Izm8mnjaTrFq5fV2naevdjBvsClIzBLtz8aQ3O9ztDG9OjV/X53pWRXwlTsHEfNAboE0LpdHsIVFOuG1QdMw1NSPkB5lWTdQKml/aAeF1DI5ot4aYppmtsY9IrQdk0pdyymJ3mpCBGKOrrvnA/ROZYVJToVeNkL4NAlAZ/XzsBrXhcEhppxeI1b5KWxYyKnfuwtZOuJIAfwoWolw7BK1W8Bji4ITtyj4p1lGRFQyMZlgBLY1sDAWJ8cxnR6CzMN8JoJcF+9opDGRL2FbMQcA2HmCbV++QUswmuSguD0MTjP0gSPiXhLkmNLKP1QwNAugHhDkf6SiPEcDGk52ZcMXZ8MEigd6CKWkOcu2fDzGPaaMaHsEkYDgH6ucWo0Tn1hH8iec4ksxci/H8PGz7EtGm/RUZsVfa3EXpNCRpzm5ZVqgLe0PzC1WANgqEyoNCC2dBYwSNeHbem9BOaZeqdlSH45MaDHbGUzuf52f7hcLudHbNM3ML3pWy+1OyjTo1dVuZRkjJHASGAkMLscmH+i+Ao+3/PvVs585wuFwudoX9xhbB6DzzY0E4/6L/V9fODmSmuTqbZYSh1DqvzfDtJjJDASGAmMBEYCI4GRwEhgdgX9J8AAK5PK7M0jMtYAAAAASUVORK5CYII=",
+                "location": {
+                    "id": "loc-0",
+                    "formattedAddress": "200 Oracle Parkway,\nRedwood Shores, CA 94065",
+                    "street1": "200 Oracle Parkway",
+                    "street2": "",
+                    "city": "Redwood Shores",
+                    "state": "CA",
+                    "zip": "94065",
+                    "country": "USA",
+                    "latitude": "37.530737",
+                    "longitude": "-122.265557"
+                }
+              }
+              
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "Unable to find technician record."}
+              
+  delete:
+    description: |
+      Remove/close the specific technician.
+      
+    protocols: [HTTPS]
+    responses:
+      204:
+        description: |
+          The specific technician item was deleted successfully.
+          
+/locations/{id}:
+  displayName: Geographical Location
+  description: |
+    Geographical Location.
+    
+  type:
+    item:
+      item-path-name: location
+      example-item: |
+        {
+          "id": "loc-0",
+          "formattedAddress": "200 Oracle Parkway,\nRedwood Shores, CA 94065",
+          "street1": "200 Oracle Parkway",
+          "street2": "",
+          "city": "Redwood Shores",
+          "state": "CA",
+          "zip": "94065",
+          "country": "USA",
+          "latitude": "37.530737",
+          "longitude": "-122.265557"
+        }
+        
+      example-patchitem: |
+        ""
+        
+  get:
+    description: |
+      Get a single location.
+      
+    protocols: [HTTPS]
+    responses:
+      200:
+        body:
+          application/json:
+            schema: location
+            example: |
+              {
+                "id": "loc-0",
+                "formattedAddress": "200 Oracle Parkway,\nRedwood Shores, CA 94065",
+                "street1": "200 Oracle Parkway",
+                "street2": "",
+                "city": "Redwood Shores",
+                "state": "CA",
+                "zip": "94065",
+                "country": "USA",
+                "latitude": "37.530737",
+                "longitude": "-122.265557"
+              }
+              
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "location not found" }
+              
+  delete:
+    description: |
+      Remove/close the specific location.
+      
+    protocols: [HTTPS]
+    responses:
+      204:
+        description: |
+          The specific location item was deleted successfully.
+          
+/storage:
+  displayName: Storage
+  description: |
+    Storage of all data.
+    
+  delete:
+    description: |
+      Remove/reset the storage of all data.
+      
+    protocols: [HTTPS]
+    responses:
+      204:
+        description: |
+          The storage of all data item was deleted successfully.
+          
+/stats:
+  displayName: Analytics
+  description: |
+    Analytics data that mashes 'incidents' and 'technician' information to provide meaningful views.
+    
+  get:
+    description: |
+      Returns incidents metrics based on proximity to the technician location for the specified period.
+      
+      This tells us how many incidents were assigned vs. fixed by a technician within a geographical radius
+      (dimension) from his current location, for the duration of period.
+      
+      In the report, each row of data has a unique combination of dimension ('month' and 'technician') and metrics
+      ('radius', 'incidentsFixed', 'incidentsAssigned').
+      
+    protocols: [HTTPS]
+    queryParameters:
+      technician:
+        displayName: Technician User Name
+        description: |
+          The technician username whose incident stats are retrieved. The special value "~" can be used to
+          indicate the authenticated user. 'technician' is also a dimension by which metrics are grouped by.
+          
+        type: string
+        enum: ['~']
+        example: |
+          technician=charlie
+          
+        required: true
+      period:
+        displayName: period
+        description: |
+          The period for which stats is being requested. E.g. 'period' set to 'bimonthy' returns data
+          for the past 2 months using a default unit of date dimension of 'month'.
+          
+        type: string
+        enum: ['annual','semi','quarter','bimonthly']
+        example: |
+          period=annual
+          
+        required: false
+        default: bimonthly
+    responses:
+      200:
+        body:
+          application/json:
+            schema: stats
+            example: |
+              {
+                "metrics": [
+                  {
+                    "month": "Sep",
+                    "technician": "Bob",
+                    "radius": 3,
+                    "incidentsClosed": 2,
+                    "incidentsAssigned": 2
+                  },
+                  {
+                    "month": "Sep",
+                    "technician": "Bob",
+                    "radius": 6,
+                    "incidentsClosed": 7,
+                    "incidentsAssigned": 7
+                  },
+                  {
+                    "month": "Sep",
+                    "technician": "Bob",
+                    "radius": 9,
+                    "incidentsClosed": 15,
+                    "incidentsAssigned": 16
+                  },
+                  {
+                    "month": "Sep",
+                    "technician": "Bob",
+                    "radius": 12,
+                    "incidentsClosed": 20,
+                    "incidentsAssigned": 25
+                  },
+                  {
+                    "month": "Sep",
+                    "technician": "Bob",
+                    "radius": 15,
+                    "incidentsClosed": 21,
+                    "incidentsAssigned": 27
+                  },
+                  {
+                    "month": "Sep",
+                    "technician": "Bob",
+                    "radius": 18,
+                    "incidentsClosed": 21,
+                    "incidentsAssigned": 30
+                  },
+                  {
+                    "month": "Aug",
+                    "technician": "Bob",
+                    "radius": 3,
+                    "incidentsClosed": 3,
+                    "incidentsAssigned": 3
+                  },
+                  {
+                    "month": "Aug",
+                    "technician": "Bob",
+                    "radius": 6,
+                    "incidentsClosed": 8,
+                    "incidentsAssigned": 9
+                  },
+                  {
+                    "month": "Aug",
+                    "technician": "Bob",
+                    "radius": 9,
+                    "incidentsClosed": 16,
+                    "incidentsAssigned": 17
+                  },
+                  {
+                    "month": "Aug",
+                    "technician": "Bob",
+                    "radius": 12,
+                    "incidentsClosed": 19,
+                    "incidentsAssigned": 21
+                  },
+                  {
+                    "month": "Aug",
+                    "technician": "Bob",
+                    "radius": 15,
+                    "incidentsClosed": 20,
+                    "incidentsAssigned": 28
+                  },
+                  {
+                    "month": "Aug",
+                    "technician": "Bob",
+                    "radius": 18,
+                    "incidentsClosed": 21,
+                    "incidentsAssigned": 35
+                  },
+              
+                  {
+                    "month": "Sep",
+                    "technician": "JohnDoe",
+                    "radius": 3,
+                    "incidentsClosed": 2,
+                    "incidentsAssigned": 2
+                  },
+                  {
+                    "month": "Sep",
+                    "technician": "JohnDoe",
+                    "radius": 6,
+                    "incidentsClosed": 8,
+                    "incidentsAssigned": 9
+                  },
+                  {
+                    "month": "Sep",
+                    "technician": "JohnDoe",
+                    "radius": 9,
+                    "incidentsClosed": 14,
+                    "incidentsAssigned": 16
+                  },
+                  {
+                    "month": "Sep",
+                    "technician": "JohnDoe",
+                    "radius": 12,
+                    "incidentsClosed": 19,
+                    "incidentsAssigned": 25
+                  },
+                  {
+                    "month": "Sep",
+                    "technician": "JohnDoe",
+                    "radius": 15,
+                    "incidentsClosed": 20,
+                    "incidentsAssigned": 27
+                  },
+                  {
+                    "month": "Sep",
+                    "technician": "JohnDoe",
+                    "radius": 18,
+                    "incidentsClosed": 20,
+                    "incidentsAssigned": 30
+                  },
+                  {
+                    "month": "Aug",
+                    "technician": "JohnDoe",
+                    "radius": 3,
+                    "incidentsClosed": 2,
+                    "incidentsAssigned": 3
+                  },
+                  {
+                    "month": "Aug",
+                    "technician": "JohnDoe",
+                    "radius": 6,
+                    "incidentsClosed": 7,
+                    "incidentsAssigned": 9
+                  },
+                  {
+                    "month": "Aug",
+                    "technician": "JohnDoe",
+                    "radius": 9,
+                    "incidentsClosed": 17,
+                    "incidentsAssigned": 17
+                  },
+                  {
+                    "month": "Aug",
+                    "technician": "JohnDoe",
+                    "radius": 12,
+                    "incidentsClosed": 17,
+                    "incidentsAssigned": 21
+                  },
+                  {
+                    "month": "Aug",
+                    "technician": "JohnDoe",
+                    "radius": 15,
+                    "incidentsClosed": 21,
+                    "incidentsAssigned": 28
+                  },
+                  {
+                    "month": "Aug",
+                    "technician": "JohnDoe",
+                    "radius": 18,
+                    "incidentsClosed": 21,
+                    "incidentsAssigned": 35
+                  }
+                ]
+              }
+              
+  /technician:
+    displayName: Technician Performance
+    description: |
+      Performance data for 'technician' over time.
+      
+    get:
+      description: |
+        Returns performance metrics for logged in technician measured over a time period, compared to the average.
+        
+      queryParameters:
+        technician:
+          displayName: Technician User Name
+          description: |
+            The technician username whose incident stats are retrieved. The special value "~" can be used to
+            indicate the authenticated user. 'technician' is also a dimension by which metrics are grouped by.
+            
+          type: string
+          enum: ['~']
+          example: |
+            technician=bob
+            
+          required: true
+        period:
+          displayName: period
+          description: |
+            The period for which stats is being requested. E.g. 'period' set to 'annual' returns data
+            for the past year using a default unit of date dimension of 'month'.
+            
+          type: string
+          enum: ['annual','semi','quarter']
+          example: |
+            period=annual
+            
+          required: false
+        filterBy:
+          displayName: Filter By
+          description: |
+            The colon separated property name and value to use, to filter incidents results. The default
+            property is 'status' and the value is 'closed'.
+            
+          type: string
+          example: |
+            filterBy={status:"closed"}
+            
+          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              schema: |
+                {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "id": "technicianStats",
+                  "title": "Technician Stats against group average",
+                  "type": "object",
+                  "properties": {
+                    "dateDimension": {
+                      "type": "string",
+                      "enum": [
+                        "month"
+                      ],
+                      "description": "The date dimension used as the unit of measurement for the performance data"
+                    },
+                    "technician": {
+                      "$ref": "person",
+                      "title": "Quick Details of technician"
+                    },
+                    "metrics": {
+                      "type": "array",
+                      "description": "Metrics are individual measurements related to incident activity, techncian performance",
+                      "items": {
+                          "$ref": "technicianStatsRow"
+                      }
+                    },
+                    "revNum": {
+                      "type": "integer",
+                      "description": "Attribute used for offline cases and incremented when data is updated on the server"
+                    }
+                  },
+                  "additionalProperties": true,
+                  "links": [
+                    {
+                      "rel": "self",
+                      "title": "Technician Statistics",
+                      "href": "/stats/technician",
+                      "method": "GET",
+                      "targetSchema": {"$ref": "technicianStats"}
+                    }
+                  ]
+                }
+                
+              example: |
+                {
+                  "dateDimension": "month",
+                  "technician": {
+                      "username": "bob",
+                      "firstName": "Bob",
+                      "lastName": "Pronto",
+                      "email": "bob.pronto@fixitfast.com",
+                      "mobile": "6505067000"
+                  },
+                  "metrics": [
+                      {
+                          "month": "Aug",
+                          "technician": "Bob",
+                          "incidentCount": 12
+                      },
+                      {
+                          "technician": "Average",
+                          "month": "Aug",
+                          "incidentCount": 10
+                      },
+                      {
+                          "technician": "Bob",
+                          "month": "Sep",
+                          "incidentCount": 8
+                      },
+                      {
+                          "technician": "Average",
+                          "month": "Sep",
+                          "incidentCount": 15
+                      },
+                      {
+                         "technician": "Bob",
+                         "month": "Oct",
+                         "incidentCount": 9
+                      },
+                      {
+                         "technician": "Average",
+                         "month": "Oct",
+                         "incidentCount": 15
+                      },
+                      {
+                         "technician": "Bob",
+                         "month": "Nov",
+                         "incidentCount": 0
+                      },
+                      {
+                         "technician": "Average",
+                         "month": "Nov",
+                         "incidentCount": 20
+                      },
+                      {
+                         "technician": "Bob",
+                         "month": "Dec",
+                         "incidentCount": 13
+                      },
+                      {
+                         "technician": "Average",
+                         "month": "Dec",
+                         "incidentCount": 11
+                      },
+                      {
+                         "technician": "Bob",
+                         "month": "Jan",
+                         "incidentCount": 7
+                      },
+                      {
+                         "technician": "Average",
+                         "month": "Jan",
+                         "incidentCount": 7
+                      },
+                      {
+                        "technician": "Bob",
+                        "month": "Feb",
+                        "incidentCount": 8
+                      },
+                      {
+                        "technician": "Average",
+                        "month": "Feb",
+                        "incidentCount": 9
+                      },
+                      {
+                        "technician": "Bob",
+                        "month": "Mar",
+                        "incidentCount": 4
+                      },
+                      {
+                        "technician": "Average",
+                        "month": "Mar",
+                        "incidentCount": 9
+                      },
+                      {
+                        "technician": "Bob",
+                        "month": "Apr",
+                        "incidentCount": 8
+                      },
+                      {
+                        "technician": "Average",
+                        "month": "Apr",
+                        "incidentCount": 9
+                      },
+                      {
+                        "technician": "Bob",
+                        "month": "May",
+                        "incidentCount": 5
+                      },
+                      {
+                        "technician": "Average",
+                        "month": "May",
+                        "incidentCount": 9
+                      },
+                      {
+                        "technician": "Bob",
+                        "month": "Jun",
+                        "incidentCount": 4
+                      },
+                      {
+                        "technician": "Average",
+                        "month": "Jun",
+                        "incidentCount": 9
+                      },
+                      {
+                        "technician": "Bob",
+                        "month": "Jul",
+                        "incidentCount": 10
+                      },
+                      {
+                        "technician": "Average",
+                        "month": "Jul",
+                        "incidentCount": 11
+                      }
+                  ]
+                }
+                
+        400:
+          description: |
+            A required query parameter 'Technician' was not specified for this request.
+            
+  /incidents:
+    displayName: Incidents Statistics
+    description: |
+      Open incident count by priority.
+      
+    get:
+      description: |
+        Returns incidents count for every priority.
+        
+      queryParameters:
+        technician:
+          displayName: Technician User Name
+          description: |
+            The technician username whose incident stats are retrieved. The special value "~" can be used to
+            reference the authenticated user.
+            
+          type: string
+          enum: ['~']
+          example: |
+            technician=bob
+            
+          required: true
+      responses:
+        200:
+          body:
+            application/json:
+              schema: incidentsStats
+              example: |
+                {
+                  "incidentCount": {
+                    "high": 5,
+                    "normal": 3,
+                    "low": 2
+                  }
+                }
+                
+        400:
+          description: |
+            A required query parameter 'Technician' was not specified for this request.

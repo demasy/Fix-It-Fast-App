@@ -1,0 +1,39 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<div>
+
+  <div class="oj-hybrid-padding">Please select a customer from the list:</div>
+
+  <div aria-label="customers" class="demo-overflow-auto">
+    <oj-list-view id="customerSelectionListView" aria-label="list to show selection features" 
+      data="[[customersDataSource]]"
+          selection-mode="single"
+          selection-required="true"
+          on-selected-changed="[[customerSelectionChange]]">
+      <template slot="itemTemplate" data-oj-as="item">
+        <li>
+          <oj-list-item-layout>
+            <span slot="secondary" class="oj-typography-body-md oj-text-color-primary" 
+              :for="[[item.data.id]]" :id="[[item.data.id+'Name']]">
+              <oj-bind-text value="[[item.data.firstName + ' ' + item.data.lastName]]"></oj-bind-text>
+            </span>
+
+            <oj-avatar slot="leading"
+              background="[[appUtilities.getAvatarColor('Customer', item.data.id)]]"
+              :id="[[item.data.id+'Avatar']]"
+              size='xs' initials='[[appUtilities.formatInitials(item.data.firstName, item.data.lastName)]]'>
+            </oj-avatar>
+          </oj-list-item-layout>
+        </li>
+      </template>
+    </oj-list-view>
+  </div>
+</div>

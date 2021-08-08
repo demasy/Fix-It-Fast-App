@@ -1,0 +1,27 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<div id="incidentMainPage" role="main" class="oj-applayout-content">
+
+<div aria-label="status" class="oj-web-padding">
+  <oj-radioset id='statusRadioSet' class='oj-radioset-no-chrome'
+        value='{{incidentData().status}}'
+        on-value-changed='[[statusChange]]'
+        disabled='[[isReadOnlyMode]]'>
+        
+        <oj-option id='open' value='open'>
+          <span alt="open" class="oj-ux-ico-folder-open" slot='startIcon'></span>Open</oj-option>
+        <oj-option id='accepted' value='accepted'>
+          <span alt="accepted" class="oj-ux-ico-folder-accepted" slot='startIcon'></span>Accepted</oj-option>
+        <oj-option id='closed' value='closed'>
+          <span alt="closed" class="oj-ux-ico-folder" slot='startIcon'></span>Closed</oj-option>
+   </oj-radioset>
+</div>
+</div>

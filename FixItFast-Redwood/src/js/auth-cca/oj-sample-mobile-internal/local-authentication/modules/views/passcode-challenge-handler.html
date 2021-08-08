@@ -1,0 +1,37 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<div :id="[['captureCurrentPasscode_' + context.uniqueId]]" class="demo-display-none">
+  <oj-sample-mobile-internal-passcode-screen :id="[['currPasscode_' + context.uniqueId]]"
+                   app-name="[[appName]]"
+                   company-name="[[companyName]]"
+                   passcode-text="[[translations.enterCurrPasscodeMsg]]"
+                   on-oj-done="[[currPasscodeCaptured]]">
+  </oj-sample-mobile-internal-passcode-screen>
+</div>
+
+<div :id="[['capturePasscode1_' + context.uniqueId]]" class="demo-display-none">
+  <oj-sample-mobile-internal-passcode-screen :id="[['passcode1_' + context.uniqueId]]"
+                   app-name="[[appName]]"
+                   company-name="[[companyName]]"
+                   passcode-text="[[translations.enterNewPasscodeMsg]]"
+                   validate-passcode-length="true"
+                   min-passcode-length="[[minLen]]"
+                   max-passcode-length="[[maxLen]]"
+                   on-oj-done="[[passcode1Captured]]">
+  </oj-sample-mobile-internal-passcode-screen>
+</div>
+
+<div :id="[['capturePasscode2_' + context.uniqueId]]" class="demo-display-none">
+  <oj-sample-mobile-internal-passcode-screen :id="[['passcode2_' + context.uniqueId]]"
+                   app-name="[[appName]]"
+                   company-name="[[companyName]]"
+                   passcode-text="[[translations.reEnterNewPasscodeMsg]]"
+                   validate-passcode-length="true"
+                   min-passcode-length="[[minLen]]"
+                   max-passcode-length="[[maxLen]]"
+                   on-oj-done="[[passcode2Captured]]">
+  </oj-sample-mobile-internal-passcode-screen>
+</div>

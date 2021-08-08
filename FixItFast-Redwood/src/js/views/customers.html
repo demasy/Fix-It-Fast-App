@@ -1,0 +1,132 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<div class="oj-hybrid-applayout-page vh-unit">
+  <div class="oj-applayout-fixed-top">
+    <oj-bind-if test="[[!isSearchMode()]]">
+      <header role="banner" class="oj-hybrid-applayout-header">
+        <div class="oj-flex-bar-start">
+          <oj-button id='navDrawerBtn' on-oj-action='[[toggleDrawer]]' chroming='borderless' display='icons'>
+            <span slot='startIcon' class='oj-ux-ico-menu'></span>
+            Navigation Drawer
+          </oj-button>
+        </div>
+        <div class="oj-hybrid-applayout-bar-title">
+          <h1 class="oj-hybrid-applayout-header-title">Customers</h1>
+        </div>
+        <div class="oj-flex-bar-end">
+          <oj-button id='enterSearchBtn'  on-oj-action='[[goToSearchMode]]' chroming='borderless' display='icons'>
+            <span slot='startIcon' class='oj-ux-ico-search'></span>
+            Search
+          </oj-button>
+
+          <oj-button id='addCustomer' on-oj-action='[[goToAddCustomer]]' display='icons' chroming='borderless'>
+            <span slot='startIcon' class="oj-ux-ico-plus"></span>
+            <span><oj-bind-text value="Add Customer Button"></oj-bind-text></span>
+          </oj-button>
+        </div>
+      </header>
+    </oj-bind-if>
+
+    <oj-bind-if test="[[isSearchMode()]]">
+      <header role="banner" class="oj-hybrid-applayout-header">
+        <div class="oj-flex-bar-start">
+          <oj-button id='exitSearchBtn' on-oj-action='[[exitSearchMode]]' chroming='borderless' display='icons'>
+            <span slot='startIcon' class='oj-ux-ico-arrow-left'></span>
+            Close Search
+          </oj-button>
+        </div>
+        <div class="oj-flex-bar-middle">
+          <oj-label for="inputSearch" class="demo-display-none">Search for customer by name</oj-label>
+          <oj-combobox-one id="inputSearch" raw-value="{{nameSearchRawValue}}" placeholder="Search for customer by name">
+            <a slot="end" id="search-button" class="oj-ux-ico-search oj-ux-icon-size-6x oj-clickable-icon-nocontext demo-width-32px"
+            role="button" aria-label="search"></a>
+          </oj-combobox-one>
+        </div>
+        <div class="oj-flex-bar-end">
+          <oj-button id='clearSearchBtn' on-oj-action='[[clearSearch]]' chroming='borderless' display='icons'>
+            <span slot='startIcon' class='oj-ux-ico-close'></span>
+            Clear Input
+          </oj-button>
+        </div>
+      </header>
+    </oj-bind-if>
+  </div>
+
+  <div class="oj-applayout-content">
+    <div role="main" class="oj-hybrid-applayout-content">
+
+      <oj-bind-if test="[[noResults()]]">
+        <div class="demo-customers-no-results">
+          <img alt="noresults" src="css/images/search_watermark.svg">
+          <h2>NO SEARCH RESULTS FOUND</h2>
+        </div>
+      </oj-bind-if>
+      <oj-bind-if test="[[!noResults()]]">
+        <div id="customerlistviewcontainer" class="oj-flex oj-sm-flex-wrap-nowrap">
+          <oj-list-view id='customerlistview' data-oj-context aria-label='customers list' class='oj-flex-item demo-customers-container'
+             data='[[indexerModel]]'
+             item.renderer='[[selectTemplate]]'
+             item.focusable='[[itemOnly]]'
+             item.selectable='[[customerSelectable]]'
+             drill-mode='none'
+             selection-mode='single'
+             on-selected-changed='[[customerSelected]]'
+             translations.msg-no-data='No customers to display'>
+          </oj-list-view>
+
+          <oj-indexer id='indexer' aria-label='customers list indexer' aria-controls='customerlistview'
+             class='demo-customers-container oj-sm-flex-initial oj-flex-item'
+             :style.display="[[isSearchMode() ? 'none' : '']]"
+             data='[[indexerModel]]'>
+          </oj-indexer>
+        </div>
+      </oj-bind-if>
+    </div>
+  </div>
+
+  <script type="text/html" id="group_template">
+    <oj-bind-if test="[[$data.id]]">
+      <li data-bind="attr: {id: $data.id}">
+        <strong><oj-bind-text value="[[$data.label]]"></oj-bind-text></strong>
+      </li>
+    </oj-bind-if>
+    <oj-bind-if test="[[! $data.id]]">
+      <li data-bind="attr: {id: $data}">
+        <strong><oj-bind-text value="[[$data]]"></oj-bind-text></strong>
+      </li>
+    </oj-bind-if>
+  </script>
+
+  <script type="text/html" id="item_template">
+    <li :id="[[id]]" :class="[[{'demo-item-not-cached': !cached}]]">
+      <div class="oj-flex-bar">
+
+        <div class="oj-flex-bar-start demo-flex-zero">
+          <oj-avatar 
+          background='[[$parent.appUtilities.getAvatarColor("customer", id)]]'
+            :id="[[id+'Avatar']]"
+             size='xs' initials='[[$parent.appUtilities.formatInitials(firstName, lastName)]]'>
+          </oj-avatar>
+
+          
+        </div>
+
+        <div class="oj-flex-bar-middle oj-hybrid-padding-start oj-sm-align-items-center demo-flex-bar-no-overflow">
+          <div :id="[[id+'Name']]" class="demo-customer-name demo-ellipsis-word-truncation"><oj-bind-text value="[[firstName + ' ' + lastName]]"></oj-bind-text></div>
+        </div>
+        <div class="oj-flex-bar-end oj-sm-align-items-center">
+          <div role="presentation" aria-hidden="true" class="oj-ux-ico-chevron-right oj-ux-icon-size-6x"></div>
+        </div>
+      </div>
+
+    </li>
+  </script>
+</div>

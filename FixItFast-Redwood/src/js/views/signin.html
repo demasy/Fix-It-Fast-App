@@ -1,0 +1,79 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+
+ <div class="oj-hybrid-applayout-page vh-unit">
+  <div :class="[[isPhone() ? 'demo-signin-bg-mobile' : 'demo-signin-bg']]" class="demo-tour-bg">
+    <div class="oj-flex oj-sm-flex-direction-column oj-sm-align-items-center">
+      <div class="oj-flex oj-flex-item oj-sm-flex-direction-column oj-bg-neutral-10 oj-panel 
+        oj-sm-padding-3x-horizontal oj-sm-margin-12x-top 
+        oj-typography-body-2xs oj-sm-justify-content-center demo-siginin-panel">
+        <div class="oj-typography-heading-xs oj-flex oj-sm-align-items-center oj-sm-flex-direction-column">Sign In to Oracle</div>
+        <oj-tab-bar edge="top" id="tab-bar" class="oj-flex-item" 
+                    selection="{{selectedItem}}">
+          <ul>
+            <li id="signIn">
+              <a href="#" id="signIn-anchor" aria-controls="signIn-div">Sign In</a>
+            </li>
+            <li id="signUp">
+              <a href="#" id="signUp-anchor" aria-controls="signUp-div">Sign Up</a>
+            </li>
+          </ul>
+        </oj-tab-bar>
+        <div class="oj-flex oj-sm-flex-direction-column">
+          <oj-switcher value="[[selectedItem]]" id="switcher" class="oj-flex-item signin-switcher oj-sm-padding-4x-top">
+            <div id="signIn-div" slot="signIn" aria-labelledby="signIn-anchor" role="tabpanel">
+              <div class="oj-flex">
+                <oj-validation-group id="tracker" valid="{{signInGroupValid}}">
+                  <oj-input-text id="signinEmail" class="oj-sm-padding-2x-bottom" 
+                    label-hint="Email" label-edge="inside" required value="{{userName}}"></oj-input-text>
+                  <oj-input-password id="signinPassword" class="oj-sm-padding-2x-bottom" 
+                    label-hint="Password" label-edge="inside" required value="{{passWord}}"></oj-input-password> 
+                </oj-validation-group>
+              </div>
+            </div>
+            <div id="signUp-div" slot="signUp" aria-labelledby="signUp-anchor" role="tabpanel">
+              <div class="oj-flex">
+                <oj-validation-group id="tracker1" valid="{{signUpGroupValid}}">
+                  <oj-input-text id="signupEmail" class="oj-sm-padding-2x-bottom" 
+                    label-hint="Email" label-edge="inside" required value=""></oj-input-text>
+                  <oj-input-password id="signupPassword" class="oj-sm-padding-2x-bottom" 
+                  label-hint="Password" label-edge="inside" required  value=""></oj-input-password>
+                </oj-validation-group>
+              </div>
+            </div>
+          </oj-switcher>
+          <div class="oj-flex-bar oj-flex-item oj-sm-align-items-center">
+              <div class="oj-flex-bar-start">
+                <oj-checkboxset id="rememberUserNameCheckBox" labelled-by="rememberUserNameId" 
+                  class="remember-username-checkbox"  value='{{rememberUserName}}'>
+                  <oj-option id="rememberUserName" value="remember" 
+                    class="oj-typography-body-2xs">Remember Username</oj-option>
+                </oj-checkboxset>
+              </div>
+              <div class="oj-flex-bar-end">
+                <a href="javascript:;" class="oj-typography-body-2xs need-help-link">Need Help?</a>
+              </div>
+          </div>
+          <oj-button id='signInBtn' class='oj-flex-item oj-sm-margin-2x-top oj-button-sm' chroming='callToAction'
+            on-oj-action='[[signIn]]'><span class="">
+              <span class='oj-hybrid-padding-horizontal'>Sign In</span></span>
+          </oj-button>
+        </div>
+
+        <ul class="footer oj-typography-body-2xs oj-flex oj-sm-margin-4x-top oj-sm-justify-content-center">
+          <li class="oj-divider-margin oj-divider-end oj-divider-padding">&#169; 2019 Oracle </li>
+          <li class="oj-sm-padding-1x-horizontal"><a href="#" class="oj-link-standalone oj-link-subtle-primary">Terms of Use</a></li>
+          <li class="oj-sm-padding-1x-horizontal"><a href="#" class="oj-link-standalone oj-link-subtle-primary">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

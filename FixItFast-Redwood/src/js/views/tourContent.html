@@ -1,0 +1,71 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<div class="oj-applayout-fixed-top demo-transparent-top">
+  <header role="banner" class="demo-transparent-header oj-flex-bar oj-hybrid-applayout-header oj-sm-align-items-center">
+    <div class="oj-flex-bar-end">
+      <oj-button id='skipTourBtn' on-oj-action='[[goToSignIn]]' chroming='borderless'>
+        <label>
+          <oj-bind-text value="[[skipOrSignIn]]"></oj-bind-text>
+        </label>
+      </oj-button>
+    </div>
+  </header>
+</div>
+<div id="filmStripDiv" class="demo-filmstrip-container oj-bg-neutral-30">
+  <oj-film-strip id='filmStrip' class="demo-stretch-items" data-oj-context max-items-per-page='1'
+    arrow-visibility='hidden' on-current-item-changed='[[function(event) { return filmStripOptionChange(event); }]]'
+    aria-label='tour film strip'>
+    <oj-bind-if test="[[isPhone()]]">
+      <oj-bind-for-each data="[[steps]]">
+        <template data-oj-as="step">
+          <div :class="[[step.data.mobileBgClass]]" class="demo-tour-bg demo-filmstrip-item oj-hybrid-padding-horizontal"
+            :style.display="[[function() { return getItemInitialDisplay(step.index) }]]">
+            <div>
+              <img :id="[[step.data.titel]]" :src="[[step.data.mobileIconClass]]" class="demo-tour-image" alt="tour photo" />
+            </div>
+            <div class="demo-padding-top-4rem">
+              <div class="oj-typography-subheading-xl">
+                <oj-bind-text value="[[step.data.title]]"></oj-bind-text>
+              </div>
+              <div class="oj-typography-body-xl oj-sm-padding-2x-end">
+                <oj-bind-text value="[[step.data.description]]"></oj-bind-text>
+              </div>
+            </div>
+          </div>
+        </template>
+      </oj-bind-for-each>
+    </oj-bind-if>
+    <oj-bind-if test="[[!isPhone()]]">
+      <oj-bind-for-each data="[[steps]]">
+        <template data-oj-as="step">
+          <div :class="[[step.data.bgClass]]" class="demo-tour-bg demo-filmstrip-item oj-hybrid-padding-horizontal"
+            :style.display="[[function() { return getItemInitialDisplay(step.index) }]]">
+            <div>
+              <img :id="[[step.data.titel]]" :src="[[step.data.iconClass]]" class="demo-tour-image" alt="tour photo" />
+            </div>
+            <div class="demo-padding-top-4rem">
+              <div class="oj-typography-subheading-xl">
+                <oj-bind-text value="[[step.data.title]]"></oj-bind-text>
+              </div>
+              <div class="oj-typography-body-xl">
+                <oj-bind-text value="[[step.data.description]]"></oj-bind-text>
+              </div>
+            </div>
+          </div>
+        </template>
+      </oj-bind-for-each>
+    </oj-bind-if>
+  </oj-film-strip>
+  <div class="demo-overlaid-paging-control">
+    <oj-paging-control id="pagingControl" data='[[pagingModel]]' page-size='0' page-options.type='dots'>
+    </oj-paging-control>
+  </div>
+</div>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<html id="htmldoc" lang="en-us">
+  <head>
+    <title>FixItFast</title>
+    <link rel="icon" sizes="212x212" href="img/Fif_launcher.png">
+
+    <meta http-equiv="x-ua-compatible" content="IE=edge"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+
+    <!-- for Safari on iOS -->
+    <meta name="apple-mobile-web-app-title" content="FixItFast">
+    <link rel="apple-touch-icon" sizes="212x212" href="img/Fif_launcher.png">
+    <link rel="apple-touch-startup-image" href="img/Splash_1X.jpg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <!-- for Chrome on Android -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- injector:theme -->
+    <link rel="stylesheet" href="css/libs/oj/v11.0.0/redwood/oj-redwood-min.css" type="text/css"/>
+    <!-- endinjector -->
+    
+    <link rel="stylesheet" href="css/fif-redwood.css" id="fif-redwood-css" />
+    <link rel="stylesheet" href="css/fif-redwood-patch.css" id="fif-redwood-patch-css" />
+    <link href="https://static.oracle.com/cdn/fnd/gallery/2001.0.0/OracleSans/OracleSans.css"  rel="stylesheet" type="text/css">
+    <link href="https://static.oracle.com/cdn/fnd/gallery/2107.3.0/images/iconfont/ojuxIconFont.min.css"  rel="stylesheet" type="text/css">
+    
+    <script data-main="js/main" src="js/libs/require/require.js"></script>
+    
+  </head>
+  <body>
+    <div id="page" class="oj-offcanvas-outer-wrapper oj-offcanvas-page demo-offcanvas-outer-wrapper">
+      <!-- nav drawer -->
+      <div id="navDrawer" role="navigation" class="demo-navdrawer oj-hybrid-applayout-offcanvas oj-offcanvas-start oj-contrast-marker">
+        <!-- User Profile -->
+        <div class="demo-navdrawer-content-wrapper oj-flex oj-sm-flex-direction-column oj-sm-flex-wrap-nowrap">
+          <div class="demo-navdrawer-content oj-sm-padding-0">
+            <div :class="[[{'oj-sm-padding-4x-vertical': isPhone}]]"  class="oj-flex oj-sm-flex-direction-column oj-sm-align-items-center oj-sm-padding-8x-vertical" data-bind="with: userProfileModel">	
+              <oj-avatar class="oj-flex-item"
+                id="profile-photo" src='[[photo]]'
+                role='img' size='xl' aria-label="Profile Photo">
+              </oj-avatar>	
+              <oj-bind-if test="[[$parent.isPhone()]]">
+                <h2 class="oj-flex-item demo-profile-name oj-typography-heading-sm">	
+                  <span><oj-bind-text value="[[firstName() + ' ' + lastName()]]"></oj-bind-text></span>
+                </h2>
+              </oj-bind-if>
+              <oj-bind-if test="[[!$parent.isPhone()]]">
+                <h2 class="oj-flex-item demo-profile-name">	
+                  <span><oj-bind-text value="[[firstName() + ' ' + lastName()]]"></oj-bind-text></span>
+                </h2>
+              </oj-bind-if>
+            </div>
+
+            <!-- Navigation -->
+            <oj-navigation-list id='appNavList' class='oj-navigationlist-stack-icon-label'
+              on-selection-changed='[[closeDrawer]]'
+              on-oj-before-select='[[beforeCloseDrawer]]'
+              selection='{{router.stateId}}'
+              aria-label="App Navigation List">
+              <ul>
+
+              <li id="incidents">
+                <a href="#">
+                <!-- <span class="oj-ux-ico-fire oj-ux-icon-size-6x"></span>
+                Incidents -->
+                  <div class="oj-flex oj-sm-flex-items-initial">
+                    <div class="oj-flex-item oj-sm-padding-2x-horizontal">
+                      <span class="oj-ux-ico-fire oj-ux-icon-size-6x" 
+                        role="img" aria-label="incidents">
+                      </span>
+                    </div>
+                    <div class="oj-flex-item oj-sm-padding-2x-horizontal">
+                      <span>Incidents</span>
+                      <oj-bind-if test="[[unreadIncidentsNum() > 0]]">
+                        <span class="oj-badge oj-badge-warning oj-sm-margin-2x-start">
+                          <oj-bind-text value="[[unreadIncidentsNum]]"></oj-bind-text>
+                        </span>
+                      </oj-bind-if>
+                    </div>
+                  </div>
+
+                
+                </a>
+              </li>
+              <li id="customers">
+                <a href="#">
+                <!-- <span class="oj-ux-ico-contact-group oj-ux-icon-size-6x"></span>
+                Customers
+                 -->
+                  <div class="oj-flex oj-sm-flex-items-initial">
+                    <div class="oj-flex-item oj-sm-padding-2x-horizontal">
+                      <span class="oj-ux-ico-contact-group oj-ux-icon-size-6x" 
+                        role="img" aria-label="customers">
+                      </span>
+                    </div>
+                    <div class="oj-flex-item oj-sm-padding-2x-horizontal">
+                      <span>Customers</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li id="profile">
+                <a href="#">
+                <!-- <span class="oj-ux-ico-contact oj-ux-icon-size-6x"></span>
+                Profile -->
+                  <div class="oj-flex oj-sm-flex-items-initial">
+                    <div class="oj-flex-item oj-sm-padding-2x-horizontal">
+                      <span class="oj-ux-ico-contact oj-ux-icon-size-6x" 
+                        role="img" aria-label="profile">
+                      </span>
+                    </div>
+                    <div class="oj-flex-item oj-sm-padding-2x-horizontal">
+                      <span>Profile</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li id="settings">
+                <a href="#">
+                  <!-- <span class="oj-ux-ico-settings oj-ux-icon-size-6x"></span>
+                  Settings -->
+                  <div class="oj-flex oj-sm-flex-items-initial">
+                    <div class="oj-flex-item oj-sm-padding-2x-horizontal">
+                      <span class="oj-ux-ico-settings oj-ux-icon-size-6x" 
+                        role="img" aria-label="settings">
+                      </span>
+                    </div>
+                    <div class="oj-flex-item oj-sm-padding-2x-horizontal">
+                      <span>Settings</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li id="about">
+                <a href="#">
+                <!-- <span class="oj-ux-ico-information oj-ux-icon-size-6x"></span>
+                About -->
+                  <div class="oj-flex oj-sm-flex-items-initial">
+                    <div class="oj-flex-item oj-sm-padding-2x-horizontal">
+                      <span class="oj-ux-ico-information oj-ux-icon-size-6x" 
+                        role="img" aria-label="about">
+                      </span>
+                    </div>
+                    <div class="oj-flex-item oj-sm-padding-2x-horizontal">
+                      <span>About</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+
+              <li id="signout" class="oj-sm-margin-6x-top">
+                <a href="#">
+                <!-- <span class="oj-ux-ico-logout oj-ux-icon-size-6x"></span>
+                Sign Out -->
+                  <div class="oj-flex oj-sm-flex-items-initial">
+                    <div class="oj-flex-item oj-sm-padding-2x-horizontal">
+                      <span class="oj-ux-ico-logout oj-ux-icon-size-6x" 
+                        role="img" aria-label="sign out">
+                      </span>
+                    </div>
+                    <div class="oj-flex-item oj-sm-padding-2x-horizontal">
+                      <span>Sign Out</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              </ul>
+            </oj-navigation-list>
+          </div>
+          <!-- Footer -->
+          <footer class="oj-sm-margin-2x demo-flex-zero demo-navdrawer-footer">
+            <div class="demo-ifixitfast-icon"></div>
+          </footer>
+        </div>
+      </div>
+
+      <!-- App level messages-->
+      <oj-messages id="appMsgs"
+        display="notification"
+        messages="[[appMessages]]"
+        position="[[appMsgPos]]"
+        on-oj-close="[[appMessageClosed]]">
+      </oj-messages>
+
+      <!-- page -->
+      <div id="pageContent">
+        <oj-module config="[[moduleConfig]]"
+                   animation="[[moduleAnimation]]"
+                   on-oj-transition-start="[[moduleTransitionStarted]]"
+                   on-oj-transition-end="[[moduleTransitionEnded]]"
+                  class="demo-min-height-100vh" :style.display="[[pageContentModuleDisplay]]"></oj-module>
+
+        <oj-bind-if test="[[window.cordova && window.cordova.plugins && window.cordova.plugins.IdmAuthFlows]]">
+          <oj-sample-mobile-internal-local-authentication id="localAuth" builder="[[localAuthBuilder]]"
+            enable-resume-challenge="true"
+            show-dismiss-button="false"
+            app-name="FixItFast"
+            company-name="Oracle"
+            min-passcode-length="4"
+            max-passcode-length="8"
+            on-oj-resume-start="[[onLocalAuthResumeStart]]"
+            on-oj-resume-end="[[onLocalAuthResumeEnd]]"
+            on-oj-message="[[onLocalAuthMessage]]">
+            <div slot="configHeader">
+              <header role="banner" >
+                <oj-module  id="configLocalHeader"
+                            class="oj-flex-bar oj-hybrid-applayout-header oj-sm-align-items-center"
+                            config="[[localAuthHeaderConfig]]"></oj-module>
+              </header>
+            </div>
+          </oj-sample-mobile-internal-local-authentication>
+        </oj-bind-if>
+      </div>
+
+      <!-- bottom drawer: camera action sheet for hybrid app -->
+      <div id="bottomDrawer" class="demo-bottom-offcanvas oj-offcanvas-bottom">
+        <oj-list-view class="demo-camera-capture-list" selection-mode="none">
+          <ul>
+            <li id="takePhoto" on-click="[[function() { return updateProfilePhoto(1); }]]">
+              <a href="#">Take a photo</a>
+            </li>
+            <li id="choosePhoto" on-click="[[function() { return updateProfilePhoto(0); }]]">
+              <a href="#">Choose a Photo</a>
+            </li>
+            <li id="cancel" on-click="[[closeBottomDrawer]]">
+              <a href="#">Cancel</a>
+            </li>
+          </ul>
+        </oj-list-view>
+      </div>
+
+      <div id="connectionDrawer" class="demo-connection-drawer oj-bg-neutral-30 oj-offcanvas-bottom">
+        <div class="oj-flex-bar demo-height-48px">
+          <div class="oj-flex-bar-start demo-width-48px">
+            <oj-bind-if test="[[connectionDrawer.isOnline()]]">
+              <img src="css/images/online_icon.png" alt="online" height="24" width="24" class="demo-margin-auto"/>
+            </oj-bind-if>
+            <oj-bind-if test="[[!connectionDrawer.isOnline()]]">
+              <img src="css/images/offline_icon.png" alt="online" height="24" width="24" class="demo-margin-auto"/>
+            </oj-bind-if>
+
+          </div>
+          <div class="oj-flex-bar-middle oj-sm-padding-2x-horizontal demo-line-height-48px">
+            <span><oj-bind-text value="[[connectionDrawer.message]]"></oj-bind-text></span>
+          </div>
+          <div class="oj-flex-bar-end oj-flex oj-sm-align-items-center">
+            <oj-button on-click="[[connectionDrawer.closeDrawer]]" display='icons' chroming='borderless'>
+              <span slot='startIcon' class='oj-ux-ico-close'></span>
+              Close
+            </oj-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Google Maps API script -->
+    <!-- <script defer async type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script> -->
+    <script type="text/javascript">
+      /* START: service worker code */
+      if ('serviceWorker' in navigator) {
+		    navigator.serviceWorker.register('sw.js').then(function (registration) {
+			      // Registration was successful
+			      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+		    }).catch(function (err) {
+			      // registration failed :(
+			      console.log('ServiceWorker registration failed: ', err);
+		    });
+	    }
+      /* END: service worker code */
+    </script>
+  </body>
+</html>

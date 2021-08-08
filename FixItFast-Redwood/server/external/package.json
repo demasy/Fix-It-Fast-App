@@ -1,0 +1,12 @@
+{
+  "name" : "fixitfastclient",
+  "version" : "4.0.0",
+  "description" : "FixItFast R/O Services to be used by mobile clients such as JET.",
+  "main" : "fixitfastclient.js",
+  "oracleMobile" : {
+    "dependencies" : {
+      "apis" : { },
+      "connectors" : { }
+    }
+  }
+}

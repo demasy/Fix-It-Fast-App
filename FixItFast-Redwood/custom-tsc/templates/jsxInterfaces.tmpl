@@ -1,0 +1,30 @@
+<?js
+const data = obj;
+const componentPropertyInterfaceWithGenerics = data.componentPropertyInterface + data.propsClassTypeParamsDeclaration;
+const propsClassNameWithGenerics = data.propsClassName + data.propsClassTypeParams;
+const readOnlyProps = obj.readOnlyProps;
+if (data.propsClassName) {?>
+export interface <?js= data.componentPropertyInterface ?> extends Partial<Readonly<<?js= data.settablePropertiesInterface ?><?js= data.propsTypeParamsAny ?>>>, GlobalProps, Pick<preact.JSX.HTMLAttributes, 'ref' | 'key'> {
+<?js
+if (readOnlyProps && readOnlyProps.length > 0) {
+  for (let prop of readOnlyProps) { ?>
+  <?js= `${prop}?: never;` ?>
+  <?js 
+  } 
+}
+if (data.slots || data.dynamicSlots){?>
+  children?: ComponentChildren;
+<?js
+}
+?>
+<?js= this.partial('listenerproperties.tmpl', data) ?>
+}
+declare global {
+  namespace preact.JSX {
+    interface IntrinsicElements {
+      "<?js= data.customElementName ?>": <?js= data.componentPropertyInterface ?>;
+    }
+  }
+}
+<?js 
+} ?>

@@ -1,0 +1,27 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+ <oj-form-layout class="oj-web-padding">
+  <oj-input-text id='problem-input' required value='{{newIncidentModel().problem}}' placeholder='Describe the problem.' label-hint="Problem" autofocus></oj-input-text>
+  <oj-label show-required id='categoryLabel'>Category</oj-label>
+  <oj-radioset id='categoryRadioSet' class='oj-radioset-no-chrome oj-web-padding demo-full-width' value='{{newIncidentModel().category}}' required='true'>
+    <oj-option id='general' value='general'>General Home</oj-option>
+    <oj-option id='appliance' value='appliance'>Appliance</oj-option>
+    <oj-option id='electrical' value='electrical'>Electrical</oj-option>
+    <oj-option id='heatingcooling' value='heatingcooling'>Heating / Cooling</oj-option>
+    <oj-option id='plumbing' value='plumbing'>Plumbing</oj-option>
+  </oj-radioset>
+  <oj-label show-required id='priorityLabel'>Priority</oj-label>
+  <oj-radioset id='priorityRadioSet' class='oj-radioset-no-chrome oj-web-padding demo-full-width' value='{{newIncidentModel().priority}}' required='true'>
+    <oj-option id='high' value='high'>High</oj-option>
+    <oj-option id='normal' value='normal'>Normal</oj-option>
+    <oj-option id='low' value='low'>Low</oj-option>
+  </oj-radioset>
+</oj-form-layout>

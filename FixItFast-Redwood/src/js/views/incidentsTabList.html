@@ -1,0 +1,133 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+
+<div class="oj-applayout-content incident-tab-only-scroll">
+  <div role="main" class="oj-hybrid-applayout-content">
+    <oj-refresher id="refresher" refresh-content="[[refreshIncidents]]" text="Checking for new incidents...">
+      <oj-list-view id='incidentsListView' data-oj-context class='demo-no-padding-li' aria-label='incidents list'
+        scroll-policy-options.scroller='[[scrollElem]]'
+        data='[[incidentsTableData]]'
+        selection-mode='single'
+        item.selectable="[[incidentSelectable]]"
+        on-selected-changed='[[incidentSelected]]'
+        scroll-position='[[scrollPos]]'
+        translations.msg-fetching-data=''
+        translations.msg-no-data=''>
+          <template slot="itemTemplate" data-oj-as="item">
+            <li class="demo-incident-list-item oj-swipeactions-container" :id="[[item.data.id]]" :class="[[{'demo-item-marker':true, 'demo-item-not-cached': !item.data.cached}]]">
+              <oj-swipe-actions on-oj-action="[[handleAction]]">
+                <div class="oj-offcanvas-outer-wrapper demo-overflow-control">
+                  <div class="oj-offcanvas-inner-wrapper">
+                    <div class="oj-flex-bar oj-sm-flex-wrap-nowrap oj-hybrid-padding">
+                      <div class="demo-incidentslist-icon-badge-container oj-flex-bar-start oj-sm-justify-content-center oj-sm-flex-direction-column 
+                        oj-sm-align-items-center demo-flex-zero oj-sm-padding-2x-horizontal">
+                        <span 
+                          :id="[[item.data.id + 'Icon']]" 
+                          :class="[[getIconClass(item.data.category) + ' oj-flex-item oj-sm-padding-1x-bottom']]"
+                          role="img"
+                          :title="[[item.data.priority + ' priority ' + item.data.category + ' incident']]" 
+                          :alt="[[item.data.priority + ' priority ' + item.data.category + ' incident']]">
+                        </span>
+                        <span :class="[[getBadgeClass(item.data.priority) + ' oj-flex-item']]">
+                          <oj-bind-text value="[[item.data.priority]]"></oj-bind-text>
+                        </span>
+                      </div>
+                      <div class="oj-flex-bar-middle oj-flex oj-sm-flex-direction-column oj-sm-flex-wrap-nowrap oj-sm-justify-content-center oj-sm-padding-2x-start demo-flex-bar-no-overflow">
+                          <div class="oj-flex-bar">
+                            <div :class="[[{'oj-typography-body-md': isPhone}]]" class="oj-flex-bar-start oj-sm-margin-3x-end oj-typography-body-lg demo-ellipsis-word-truncation oj-text-secondary-color" :id="[[item.data.id+'Problem']]" :style="[[{'fontWeight': item.data.read ? 'normal' : 'bold'}]]">
+                              <oj-bind-text value="[[item.data.problem]]"></oj-bind-text>
+                            </div>
+                            <div :class="[[{'oj-typography-body-sm': isPhone}]]" class="oj-flex-bar-end oj-typography-body-md demo-flex-zero oj-text-secondary-color" :id="[[item.data.id+'Status']]">
+                              <oj-bind-text value="[[item.data.statusObservable().toUpperCase()]]"></oj-bind-text>
+                            </div>
+                          </div>
+                          <div class="oj-flex-bar">
+                            <div :class="[[{'oj-typography-body-sm': isPhone}]]" class="oj-flex-bar-start oj-typography-body-sm demo-ellipsis-word-truncation oj-text-secondary-color" :id="[[item.data.id+'Customer']]">
+                              <oj-bind-text value="[[item.data.customer.firstName + ' ' + item.data.customer.lastName]]"></oj-bind-text>
+                            </div>
+                            <div :class="[[{'oj-typography-body-sm': isPhone}]]" class="oj-flex-bar-end oj-typography-body-sm demo-flex-zero oj-text-secondary-color" :id="[[item.data.id+'TimeStamp']]">
+                              <oj-bind-text value="[[item.data.formattedCreatedOn]]"></oj-bind-text>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <template slot="end">
+                  <oj-bind-if test="[[item.data.statusObservable() === 'accepted']]">
+                    <oj-option class="oj-swipeactions-attention" value="open">
+                      <span>RETURN</span>
+                    </oj-option>
+                  </oj-bind-if>
+                  <oj-bind-if test="[[item.data.statusObservable() === 'fixed']]">
+                    <oj-option class="oj-swipeactions-neutral" value="open">
+                      <span>OPEN</span>
+                    </oj-option>
+                  </oj-bind-if>
+                  <oj-bind-if test="[[item.data.statusObservable() === 'accepted']]">
+                    <oj-option class="oj-swipeactions-danger" value="closed">
+                      <span>CLOSE</span>
+                    </oj-option>
+                  </oj-bind-if>
+                  <oj-bind-if test="[[item.data.statusObservable() === 'open']]">
+                    <oj-option value="accepted" class="demo-width-150px">
+                      <span>ACCEPT</span>
+                    </oj-option>
+                  </oj-bind-if>
+                </template>
+              </oj-swipe-actions>
+            </li>
+          </template>
+      </oj-list-view>
+    </oj-refresher>
+
+    <div id="popupWrapper">
+      <oj-popup id='filterpopup' class='oj-bg-neutral-10' tail='none' modality="modal" chrome='none'>
+        <div class="oj-flex-bar">
+          <div class="oj-flex-bar-end oj-hybrid-padding">
+            <a id="closeFilterBtn" class="oj-link-standalone" href="#" on-click="[[closePopup]]">Done</a>
+          </div>
+        </div>
+        <oj-form-layout>
+          <div class="oj-bg-neutral-30">
+            <oj-label id='priorityLabel' class='oj-hybrid-padding-start'>Priority</oj-label>
+          </div>
+      
+          <oj-checkboxset aria-labelledby='priorityLabel' value='{{priorityFilterArr}}' 
+            class='oj-checkboxset-no-chrome oj-web-padding'>
+            <oj-option id='highopt' value='high'>
+              <span alt="high" class="oj-ux-ico-odometer" slot='startIcon'></span>High
+            </oj-option>
+            <oj-option id='normalopt' value='normal'>
+              <span alt="normal" class="oj-ux-ico-odometer-mid" slot='startIcon'></span>Normal
+            </oj-option>
+            <oj-option id='lowopt' value='low'>
+              <span alt="low" class="oj-ux-ico-odometer-low" slot='startIcon'></span>Low
+            </oj-option>
+          </oj-checkboxset>
+          <div class="oj-bg-neutral-30">
+            <oj-label id='statusLabel' class='oj-hybrid-padding-start'>Status</oj-label>
+          </div>
+          <oj-checkboxset aria-labelledby='statusLabel' value='{{statusFilterArr}}' 
+            class='oj-checkboxset-no-chrome oj-web-padding'>
+            <oj-option id='openopt' value='open'>
+              <span alt="open" class="oj-ux-ico-folder-open" slot='startIcon'></span>Open</oj-option>
+            <oj-option id='acceptedopt' value='accepted'>
+              <span alt="accepted" class="oj-ux-ico-folder-accepted" slot='startIcon'></span>Accepted</oj-option>
+            <oj-option id='closedopt' value='closed'>
+              <span alt="closed" class="oj-ux-ico-folder" slot='startIcon'></span>Closed</oj-option>
+          </oj-checkboxset>
+        </oj-form-layout>
+      </oj-popup>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,27 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+ <div :class="[[isPhone() ? 'demo-bg-mobile': 'demo-bg']]" class="demo-rw-pattern6 demo-rw-pattern-25p oj-bg-neutral-30">
+  <div
+    class="demo-tour-launch-action oj-sm-flex-direction-column oj-hybrid-padding-end oj-flex oj-sm-align-items-center oj-sm-justify-content-center">
+    <div>
+          <img src="img/Fif_launcher.png" class="demo-svg-image" alt="fixitfast icon">
+    </div>
+    <div class="oj-typography-subheading-2xl oj-sm-margin-0 oj-color-invert">Oracle FixItFast</div>
+    <div class="oj-sm-margin-9x-top oj-sm-padding-9x-top oj-color-invert">
+    <oj-button id="launchTourBtn" class="oj-sm-margin-3x-end" on-oj-action='[[startTour]]' chroming='callToAction'>
+      Take Tour
+    </oj-button>
+    <oj-button id="skipTourBtn" class="oj-color-invert" on-oj-action='[[goToSignIn]]' chroming='outlined'>
+      Skip Tour
+    </oj-button>
+    </div>
+  </div>
+</div>

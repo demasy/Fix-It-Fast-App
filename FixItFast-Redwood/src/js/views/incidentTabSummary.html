@@ -1,0 +1,57 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+
+ <div id="incidentMainPage" role="main" class="oj-applayout-content">
+
+  <div>
+    <oj-form-layout class="oj-web-padding">
+      <oj-input-text label-hint="Problem" value="[[incidentData().problem]]" class="oj-sm-padding-4x-horizontal" readonly></oj-input-text>
+      
+      <oj-label-value>
+        <oj-label slot="label" class="oj-sm-padding-4x-horizontal">Priority</oj-label>
+        <a slot="value" on-click="[[goToPriority]]" class="oj-sm-padding-4x-horizontal">
+          <span id="incidentPriorityIcon" alt="Incident Priority Icon" 
+              :class="[[getPriorityIcon(incidentData().priority)]]"></span>
+          <oj-bind-text value="[[getInitCap(incidentData().priority)]]"></oj-bind-text>
+        </a>              
+      </oj-label-value>
+      <oj-label-value>
+        <oj-label slot="label" class="oj-sm-padding-4x-horizontal">Status</oj-label>
+        <a slot="value" on-click="[[goToStatus]]" class="oj-sm-padding-4x-horizontal">
+          <span id="incidentStatusIcon" alt="Incident Status Icon" 
+              :class="[[getIncidentStatusIcon(incidentData().status)]]"></span>
+          <oj-bind-text value="[[getInitCap(incidentData().status)]]"></oj-bind-text>
+        </a>
+      </oj-label-value>
+
+      <oj-label-value>
+        <oj-label slot="label" class="oj-sm-padding-4x-horizontal">Customer</oj-label>
+        <a href="#" id="customerName" slot="value" class="oj-sm-padding-4x-horizontal" on-click="[[function() { return goToCustomer(incidentData().customerId, incidentData().id) }]]">
+          <oj-bind-text value="[[incidentData().customer.firstName + ' ' + incidentData().customer.lastName]]"></oj-bind-text>
+        </a>
+      </oj-label-value>
+
+      <oj-label-value>
+        <oj-label slot="label" class="oj-sm-padding-4x-horizontal">Mobile</oj-label>
+        <a id="customerMobile" slot="value" class="oj-sm-padding-4x-horizontal" :href="[['tel:'+incidentData().customer.mobile]]">
+          <oj-bind-text value="[[incidentData().customer.mobile]]"></oj-bind-text>
+        </a>
+      </oj-label-value>
+
+      <oj-label-value>
+        <oj-label slot="label" class="oj-sm-padding-4x-horizontal">Address</oj-label>
+        <a id="incidentLocation" slot="value" class="oj-sm-padding-4x-horizontal" on-click="[[goToCustomerLocationMap]]" href="">
+          <oj-bind-text value="[[incidentData().location.formattedAddress]]"></oj-bind-text>
+        </a>
+      </oj-label-value>
+    </oj-form-layout>
+  </div>
+</div>

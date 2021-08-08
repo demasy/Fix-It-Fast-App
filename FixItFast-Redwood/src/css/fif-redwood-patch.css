@@ -1,0 +1,14 @@
+
+/* Oracle Maps has it's own progress bar.
+ * This custom style is a tweak to make the progress bar color match with redwood theme.
+ * NOTE: This is different from OJET ProgressBar component.
+*/
+div#progressBarDiv1 {
+  background: none;
+  background-color: rgb(var(--oj-palette-brand-rgb-10));
+}
+
+.omv2_progDiv > span.omv2_progSpan {
+  background: none;
+  background-color: rgb(var(--oj-palette-brand-rgb-30));
+}

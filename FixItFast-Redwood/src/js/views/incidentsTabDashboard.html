@@ -1,0 +1,96 @@
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<!--
+ Copyright (c) 2014, 2021, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<div class="oj-applayout-content demo-full-viewport-height">
+  <div role="main" class="oj-hybrid-applayout-content demo-full-height demo-overflow-auto">
+
+    <div class="demo-dashboard-container oj-flex oj-sm-flex-direction-column oj-sm-flex-wrap-nowrap">
+      <oj-bind-if test="[[isPhone()]]">
+        <h3 class="demo-flex-zero oj-typography-heading-sm">Incidents Needing Attention</h3>
+      </oj-bind-if>
+      <oj-bind-if test="[[!isPhone()]]">
+        <h3 class="demo-flex-zero">Incidents Needing Attention</h3>
+      </oj-bind-if>
+
+    	<div :class="[[{'demo-pie-chart-container-phone': isPhone}]]" class="oj-sm-flex-1 demo-pie-chart-container">
+
+    		<oj-chart id='pieChart' class='demo-pie-chart'
+            type='pie'
+  	        series='[[pieSeriesValue]]'
+  	        groups='[[pieGroupsValue]]'
+            legend.rendered='off'
+  	        style-defaults.pie-inner-radius='[[innerRadius]]'
+            style-defaults.data-label-position='none'
+  	        animation-on-data-change='auto'
+  	        pie-center.label='[[centerLabel]]'
+  	        pie-center.label-style='[[labelStyle]]'
+            value-formats.value.converter='[[integerConverter]]'>
+        </oj-chart>
+
+    	</div>
+
+      <div class="demo-flex-zero">
+        <oj-bind-if test="[[isPhone()]]">
+          <h5 class="oj-text-sm oj-sm-margin-0-top oj-typography-heading-xs">Total Incidents</h5>
+        </oj-bind-if>
+        <oj-bind-if test="[[!isPhone()]]">
+          <h5 class="oj-text-sm oj-sm-margin-0-top">Total Incidents</h5>
+        </oj-bind-if>
+
+        <div class="oj-flex oj-hybrid-padding-bottom">
+          <div class="oj-flex-item">
+            <div id="highPriCount" :class="[[{'oj-typography-body-sm': isPhone}]]" class="oj-text-color-danger oj-typography-body-xl">
+              <oj-bind-text value="[[numPriorityHigh]]"></oj-bind-text>
+            </div>
+            <div id="hightPriLabel" :class="[[{'oj-typography-body-xs': isPhone}]]" class="oj-typography-body-sm oj-text-color-secondary">HIGH</div>
+          </div>
+          <div class="oj-flex-item">
+            <div id="normalPriCount" :class="[[{'oj-typography-body-sm': isPhone}]]"  class="oj-typography-body-xl">
+              <oj-bind-text value="[[numPriorityNormal]]"></oj-bind-text>
+            </div>
+            <div id="normalPriLabel"  :class="[[{'oj-typography-body-xs': isPhone}]]" class="oj-typography-body-sm oj-text-color-secondary">NORMAL</div>
+          </div>
+          <div class="oj-flex-item">
+            <div id="lowPriCount" :class="[[{'oj-typography-body-sm': isPhone}]]" class="oj-text-color-success oj-typography-body-xl">
+              <oj-bind-text value="[[numPriorityLow]]"></oj-bind-text>
+            </div>
+            <div id="lowPriLabel" :class="[[{'oj-typography-body-xs': isPhone}]]" class="oj-typography-body-sm oj-text-color-secondary">LOW</div>
+          </div>
+        </div>
+      </div>
+
+    	<div id="chart-container" class="demo-flex-zero demo-bar-chart-container">
+          <div :class="[[{'oj-typography-body-sm oj-xs-padding-2x': isPhone}]]" class="demo-flex-zero demo-dashboard-chart-title oj-typography-body-md oj-sm-padding-2x">Incidents Resolved By Month</div>
+
+    		<oj-chart id='barChart' class='demo-bar-chart'
+    				type='bar'
+    				orientation='vertical'
+    				stack='on'
+    				series='[[barSeriesValue]]'
+    				groups='[[barGroupsValue]]'
+    				animation-on-data-change='auto'
+    				animation-on-display='auto'
+            tooltip.renderer='[[tooltipFunction]]'
+			      data-cursor='on'
+    				legend.rendered='on'
+            legend.position='bottom'
+            legend.text-style='{"color": "rgba(252, 251, 250, 0.6)"}'
+    				y-axis.major-tick.line-color='#1a1816'
+            y-axis.tick-label='{"style": {"color": "rgba(252, 251, 250, 0.6)"}}'
+            x-axis.tick-label='{"style": {"color": "rgba(252, 251, 250, 0.6)"}}'
+    				style-defaults.bar-gap-ratio='0.25'
+    				value-formats.value.converter='[[integerConverter]]'>
+    		</oj-chart>
+
+    	</div>
+    </div>
+
+  </div>
+</div>
